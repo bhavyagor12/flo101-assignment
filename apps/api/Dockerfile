@@ -23,7 +23,6 @@ RUN uv sync --no-install-project --frozen 2>/dev/null || uv sync --no-install-pr
 
 # Source
 COPY apps/api/src ./src
-COPY apps/api/README.md* ./
 RUN uv sync --frozen 2>/dev/null || uv sync
 
 ENV PATH="/opt/venv/bin:${PATH}"
