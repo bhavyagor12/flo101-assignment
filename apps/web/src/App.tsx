@@ -8,7 +8,7 @@ import { MenuBar } from "./components/MenuBar";
 import { ResultTab } from "./components/ResultTab";
 import { RightPanel, type RightTab } from "./components/RightPanel";
 import { StatusBar } from "./components/StatusBar";
-import { useEvaluate, useHealth, useSpec } from "./lib/hooks";
+import { useEvaluate, useEvaluations, useHealth, useSpec } from "./lib/hooks";
 
 const KINDS: ArtifactKind[] = [
   "text",
@@ -23,29 +23,41 @@ export function App() {
   const [content, setContent] = useState("");
   const [kind, setKind] = useState<ArtifactKind>("text");
   const [activeTab, setActiveTab] = useState<RightTab>("config");
+  const [selectedEvaluationId, setSelectedEvaluationId] = useState<string | null>(null);
 
   const health = useHealth();
-  const spec = useSpec(selectedSpecId);
+  const evaluations = useEvaluations();
+  const activeSpec = useSpec(selectedSpecId);
   const evaluate = useEvaluate({
-    onSuccess: () => setActiveTab("result"),
+    onSuccess: (ev) => {
+      setSelectedEvaluationId(ev.id);
+      setActiveTab("result");
+    },
   });
+  const history = evaluations.data ?? [];
+  const selectedEvaluation =
+    history.find((ev) => ev.id === selectedEvaluationId) ??
+    evaluate.data ??
+    null;
+  const displayedSpecId = selectedEvaluation?.spec_id ?? selectedSpecId;
+  const resultSpec = useSpec(displayedSpecId);
 
   // Sync `kind` to the spec's preferred artifact kind once per spec change.
   const syncedSpecRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!spec.data) return;
-    if (syncedSpecRef.current === spec.data.id) return;
-    syncedSpecRef.current = spec.data.id;
-    if (KINDS.includes(spec.data.artifact_kind)) {
-      setKind(spec.data.artifact_kind);
+    if (!activeSpec.data) return;
+    if (syncedSpecRef.current === activeSpec.data.id) return;
+    syncedSpecRef.current = activeSpec.data.id;
+    if (KINDS.includes(activeSpec.data.artifact_kind)) {
+      setKind(activeSpec.data.artifact_kind);
     }
-  }, [spec.data]);
+  }, [activeSpec.data]);
 
   const apiStatus =
     health.data?.status ?? (health.isLoading ? "starting" : "down");
 
   const filename = filenameFor(kind);
-  const evaluation = evaluate.data ?? null;
+  const currentEvaluationId = evaluate.data?.id ?? null;
 
   const handleSubmit = () => {
     if (!selectedSpecId || !content.trim() || evaluate.isPending) return;
@@ -88,7 +100,7 @@ export function App() {
         <RightPanel
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          hasResult={!!evaluation}
+          hasResult={!!selectedEvaluation || history.length > 0}
           config={
             <ConfigTab
               selectedSpecId={selectedSpecId}
@@ -97,10 +109,16 @@ export function App() {
           }
           result={
             <ResultTab
-              evaluation={evaluation}
-              spec={spec.data ?? null}
-              artifactContent={content}
+              evaluation={selectedEvaluation}
+              spec={resultSpec.data ?? null}
+              artifactContent={
+                selectedEvaluation?.id === currentEvaluationId ? content : ""
+              }
               artifactFilename={filename}
+              evaluations={history}
+              selectedEvaluationId={selectedEvaluation?.id ?? null}
+              loadingHistory={evaluations.isLoading}
+              onSelectEvaluation={setSelectedEvaluationId}
             />
           }
         />

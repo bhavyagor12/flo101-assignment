@@ -52,6 +52,13 @@ export function useSpec(id: string | null) {
   });
 }
 
+export function useEvaluations() {
+  return useQuery({
+    queryKey: queryKeys.evaluations,
+    queryFn: () => api.listEvaluations(),
+  });
+}
+
 export function useCreateSpec(
   opts?: UseMutationOptions<SkillSpec, ApiError, SynthesizeRequest>,
 ) {

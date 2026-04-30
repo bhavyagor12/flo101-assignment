@@ -19,6 +19,10 @@ interface ResultTabProps {
   spec: SkillSpec | null;
   artifactContent: string;
   artifactFilename: string;
+  evaluations: Evaluation[];
+  selectedEvaluationId: string | null;
+  loadingHistory: boolean;
+  onSelectEvaluation: (id: string) => void;
   onRefactor?: () => void;
 }
 
@@ -27,15 +31,44 @@ export function ResultTab({
   spec,
   artifactContent,
   artifactFilename,
+  evaluations,
+  selectedEvaluationId,
+  loadingHistory,
+  onSelectEvaluation,
   onRefactor,
 }: ResultTabProps) {
-  if (!evaluation || !spec) {
+  if (!evaluation) {
     return (
-      <div className="flex h-full items-center justify-center px-8 py-20 text-center">
-        <p className="text-[12px] leading-relaxed text-[var(--color-fg-faint)]">
-          No evaluation yet. Submit an artifact in the editor to see scores,
-          cited evidence, and the recommended next action here.
-        </p>
+      <div className="flex min-h-full">
+        <RunHistory
+          evaluations={evaluations}
+          selectedEvaluationId={selectedEvaluationId}
+          loading={loadingHistory}
+          onSelectEvaluation={onSelectEvaluation}
+        />
+        <div className="flex flex-1 items-center justify-center px-8 py-20 text-center">
+          <p className="text-[12px] leading-relaxed text-[var(--color-fg-faint)]">
+            No evaluation selected. Submit an artifact or choose a previous run.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!spec) {
+    return (
+      <div className="flex min-h-full">
+        <RunHistory
+          evaluations={evaluations}
+          selectedEvaluationId={selectedEvaluationId}
+          loading={loadingHistory}
+          onSelectEvaluation={onSelectEvaluation}
+        />
+        <div className="flex flex-1 items-center justify-center px-8 py-20 text-center">
+          <p className="text-[12px] leading-relaxed text-[var(--color-fg-faint)]">
+            Loading rubric for selected run.
+          </p>
+        </div>
       </div>
     );
   }
@@ -46,11 +79,21 @@ export function ResultTab({
   const dimByID = new Map(spec.rubric.dimensions.map((d) => [d.id, d]));
   const headline = headlineFor(evaluation);
   const elapsed = elapsedSeconds(evaluation);
+  const targetLabel = artifactContent
+    ? artifactFilename
+    : `stored artifact ${evaluation.artifact_id.slice(0, 8)}`;
 
   return (
-    <div className="animate-result-enter">
+    <div className="flex min-h-full">
+      <RunHistory
+        evaluations={evaluations}
+        selectedEvaluationId={selectedEvaluationId}
+        loading={loadingHistory}
+        onSelectEvaluation={onSelectEvaluation}
+      />
+      <div className="min-w-0 flex-1 animate-result-enter">
       <div className="border-b border-[var(--color-border)]">
-        <Row label="Target file" value={artifactFilename} />
+        <Row label="Target file" value={targetLabel} />
         <Row label="Applied rubric" value={spec.goal_text} />
       </div>
 
@@ -179,7 +222,77 @@ export function ResultTab({
           </Row>
         )}
       </CollapsibleSection>
+      </div>
     </div>
+  );
+}
+
+function RunHistory({
+  evaluations,
+  selectedEvaluationId,
+  loading,
+  onSelectEvaluation,
+}: {
+  evaluations: Evaluation[];
+  selectedEvaluationId: string | null;
+  loading: boolean;
+  onSelectEvaluation: (id: string) => void;
+}) {
+  return (
+    <aside className="w-36 flex-none border-r border-[var(--color-border)] bg-[var(--color-bg-deep)]">
+      <div className="border-b border-[var(--color-border)] px-3 py-3">
+        <div className="text-[10px] font-medium uppercase tracking-wider text-[var(--color-fg-faint)]">
+          Runs
+        </div>
+        <div className="mt-1 text-[10px] tabular-nums text-[var(--color-fg-faint)]">
+          {loading ? "loading" : `${evaluations.length} stored`}
+        </div>
+      </div>
+      {evaluations.length === 0 ? (
+        <p className="px-3 py-4 text-[11px] leading-relaxed text-[var(--color-fg-faint)]">
+          Previous critiques will appear here.
+        </p>
+      ) : (
+        <ol>
+          {evaluations.map((ev) => {
+            const active = ev.id === selectedEvaluationId;
+            const overall =
+              ev.overall_score === null || ev.overall_score === undefined
+                ? "—"
+                : Math.round(ev.overall_score * 20);
+            const headline = headlineFor(ev);
+            return (
+              <li key={ev.id}>
+                <button
+                  type="button"
+                  onClick={() => onSelectEvaluation(ev.id)}
+                  className={`w-full border-b border-[var(--color-border)] px-3 py-3 text-left transition-colors hover:bg-[var(--color-surface)]/60 ${
+                    active ? "bg-[var(--color-surface)]/70" : ""
+                  }`}
+                >
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-mono text-[18px] leading-none tabular-nums text-[var(--color-fg)]">
+                      {overall}
+                    </span>
+                    <span className="text-[9px] uppercase tracking-wider text-[var(--color-fg-faint)]">
+                      {ev.status}
+                    </span>
+                  </div>
+                  <div
+                    className={`mt-1 truncate text-[9px] font-semibold uppercase tracking-wider ${headline.tone}`}
+                  >
+                    {headline.label}
+                  </div>
+                  <div className="mt-1 truncate text-[10px] tabular-nums text-[var(--color-fg-faint)]">
+                    {formatTime(ev.created_at)}
+                  </div>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </aside>
   );
 }
 
@@ -259,7 +372,7 @@ function EvidenceBlock({
 }) {
   const lineNum = parseLineNumber(evidence.location);
   const excerpt =
-    lineNum && evidence.source === "artifact"
+    lineNum && evidence.source === "artifact" && artifactContent.trim()
       ? buildExcerpt(artifactContent, lineNum, 1)
       : null;
 
