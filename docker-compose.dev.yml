@@ -1,0 +1,40 @@
+name: flo101
+
+# Hot-reload overrides. Source is bind-mounted so edits trigger reload.
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# or simply:
+#   make dev
+
+services:
+  api:
+    command: ["uv", "run", "uvicorn", "flo101_api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--reload-dir", "/app/src"]
+    volumes:
+      - ./apps/api/src:/app/src
+      - api-data:/data
+      - api-corpora:/corpora
+    environment:
+      - LOG_LEVEL=DEBUG
+
+  web:
+    image: node:22-alpine
+    working_dir: /repo/apps/web
+    command: >
+      sh -c "
+        corepack enable &&
+        corepack prepare pnpm@10.33.0 --activate &&
+        pnpm install &&
+        pnpm dev
+      "
+    volumes:
+      - .:/repo
+      - web-node-modules:/repo/node_modules
+      - web-app-node-modules:/repo/apps/web/node_modules
+    environment:
+      - VITE_API_BASE_URL=/api
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  web-node-modules:
+  web-app-node-modules:

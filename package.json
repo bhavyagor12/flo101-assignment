@@ -1,0 +1,24 @@
+{
+  "name": "flo101",
+  "version": "0.1.0",
+  "private": true,
+  "description": "flo101 Critic Agent — Track C: Proof-of-Work Evaluator",
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "type-gen": "turbo run type-gen",
+    "clean": "turbo run clean && rm -rf node_modules .turbo"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  }
+}

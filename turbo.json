@@ -1,0 +1,41 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalDependencies": [".env", ".env.example"],
+  "globalEnv": [
+    "OPENROUTER_API_KEY",
+    "OPENAI_API_KEY",
+    "LANGSMITH_API_KEY",
+    "LANGSMITH_TRACING",
+    "LANGSMITH_PROJECT",
+    "NEXT_PUBLIC_API_BASE_URL"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "type-gen"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "dev": {
+      "dependsOn": ["^type-gen"],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": []
+    },
+    "type-check": {
+      "dependsOn": ["^build", "type-gen"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "type-gen": {
+      "outputs": ["src/generated.ts", "src/**/*.generated.ts"]
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

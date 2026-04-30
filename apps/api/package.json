@@ -1,0 +1,16 @@
+{
+  "name": "@flo101/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Turbo shim for the Python API package; scripts shell out to uv.",
+  "scripts": {
+    "dev": "uv run uvicorn flo101_api.main:app --host 0.0.0.0 --port 8000 --reload",
+    "start": "uv run uvicorn flo101_api.main:app --host 0.0.0.0 --port 8000",
+    "build": "uv build",
+    "test": "uv run pytest",
+    "lint": "uv run ruff check .",
+    "type-check": "uv run pyright",
+    "type-gen": "uv run python -m flo101_api.scripts.export_schema",
+    "clean": "rm -rf .venv dist .pytest_cache .ruff_cache"
+  }
+}

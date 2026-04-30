@@ -1,0 +1,27 @@
+{
+  "name": "@flo101/api-types",
+  "version": "0.0.0",
+  "private": true,
+  "description": "TypeScript types generated from the FastAPI OpenAPI schema. Do not hand-edit src/generated.ts.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "lint": "echo 'no lint for generated package'",
+    "type-check": "tsc -b --noEmit",
+    "type-gen": "openapi-typescript ../../openapi.json -o ./src/generated.ts",
+    "clean": "rm -rf dist .turbo node_modules src/generated.ts"
+  },
+  "devDependencies": {
+    "@flo101/tsconfig": "workspace:*",
+    "openapi-typescript": "^7.4.4",
+    "typescript": "^5.7.2"
+  }
+}

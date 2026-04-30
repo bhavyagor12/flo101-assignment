@@ -1,0 +1,74 @@
+# ─── Node / pnpm / turbo ──────────────────────────────────────────
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+.turbo/
+.cache/
+.eslintcache
+.swc/
+.next/
+.vite/
+*.timestamp-*
+
+# ─── Build outputs ────────────────────────────────────────────────
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# ─── Python / uv / pyright / pytest ───────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.tox/
+.nox/
+*.egg-info/
+.python-version
+
+# ─── Coverage ─────────────────────────────────────────────────────
+.coverage
+.coverage.*
+coverage/
+coverage.xml
+htmlcov/
+junit.xml
+
+# ─── Env / secrets ────────────────────────────────────────────────
+.env
+.env.*
+*.local
+!.env.example
+
+# ─── Persistent runtime data (per-spec corpora, sqlite) ──────────
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite-journal
+*.db
+data/
+corpora/
+
+# ─── OS / editor metadata ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# ─── Logs ─────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Generated artifacts ──────────────────────────────────────────
+packages/api-types/src/generated.ts
+openapi.json
