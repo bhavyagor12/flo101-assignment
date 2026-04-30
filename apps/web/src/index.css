@@ -2,23 +2,40 @@
 
 @theme {
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Neutrals tinted toward emerald (hue 155). Chroma is small but non-zero; a
-     pure #000 / #fff feels dead. The accent at L=0.78 is the same hue family. */
-  --color-bg: oklch(0.155 0.005 155);
-  --color-surface: oklch(0.195 0.006 155);
-  --color-surface-2: oklch(0.235 0.007 155);
-  --color-border: oklch(0.30 0.008 155);
-  --color-border-strong: oklch(0.42 0.012 155);
-  --color-fg: oklch(0.95 0.005 155);
-  --color-fg-dim: oklch(0.66 0.008 155);
-  --color-fg-faint: oklch(0.46 0.008 155);
+  /* Near-black neutrals tinted toward 240 (cool blue-gray). The reference
+     uses a pure black IDE register; we keep a hint of chroma so the surface
+     doesn't look dead under bright displays. */
+  --color-bg: oklch(0.115 0.005 240);
+  --color-bg-deep: oklch(0.085 0.005 240);
+  --color-surface: oklch(0.155 0.006 240);
+  --color-surface-2: oklch(0.195 0.007 240);
+  --color-surface-3: oklch(0.235 0.008 240);
+  --color-border: oklch(0.26 0.008 240);
+  --color-border-strong: oklch(0.36 0.01 240);
 
-  --color-accent: oklch(0.78 0.15 155);
-  --color-accent-soft: oklch(0.78 0.15 155 / 0.12);
-  --color-warn: oklch(0.79 0.15 75);
-  --color-danger: oklch(0.69 0.18 25);
+  --color-fg: oklch(0.94 0.005 240);
+  --color-fg-dim: oklch(0.66 0.008 240);
+  --color-fg-faint: oklch(0.46 0.01 240);
+
+  /* Primary CTA: bright blue. Used for the single primary action per surface. */
+  --color-primary: oklch(0.62 0.20 250);
+  --color-primary-hover: oklch(0.68 0.20 250);
+  --color-primary-soft: oklch(0.62 0.20 250 / 0.15);
+
+  /* Score / severity. Tied to integer scores 1-5 in code:
+     1-2 → low, 3 → mid, 4-5 → good. */
+  --color-score-good: oklch(0.70 0.16 145);
+  --color-score-mid: oklch(0.78 0.15 75);
+  --color-score-low: oklch(0.65 0.20 25);
+
+  /* Cited-evidence code block uses a low-saturation red wash on the
+     highlighted line so the violation reads at a glance without screaming. */
+  --color-violation-bg: oklch(0.30 0.10 25 / 0.32);
+  --color-violation-bg-strong: oklch(0.35 0.13 25 / 0.45);
+
+  --color-link: oklch(0.70 0.18 240);
 
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -35,34 +52,23 @@ body,
   text-rendering: optimizeLegibility;
 }
 
-/* Result reveal: 240ms ease-out-quart, fade + small lift. Conveys state
-   change (a critique just landed); not decoration. */
-@keyframes result-enter {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+body {
+  font-size: 13px;
 }
 
-.animate-result-enter {
-  animation: result-enter 240ms var(--ease-out-quart) both;
+/* Result panel reveal — 240ms out-quart, fade + small lift. */
+@keyframes result-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+.animate-result-enter { animation: result-enter 240ms var(--ease-out-quart) both; }
 
 @keyframes row-stagger {
-  from {
-    opacity: 0;
-    transform: translateY(2px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+.animate-row-stagger { animation: row-stagger 220ms var(--ease-out-quart) both; }
 
-.animate-row-stagger {
-  animation: row-stagger 220ms var(--ease-out-quart) both;
-}
+/* Hide scrollbars on the line-number gutter while keeping scroll behavior. */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
