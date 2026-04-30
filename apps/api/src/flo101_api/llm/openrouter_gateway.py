@@ -34,6 +34,30 @@ from flo101_api.observability import get_logger
 T = TypeVar("T", bound=BaseModel)
 
 
+# JSON-Schema features Anthropic's structured-output parser rejects.
+# Pydantic still validates responses against the original constraints, so
+# stripping these only affects the schema sent to the model — unsupported
+# constraints become "soft" checks enforced by the repair retry loop.
+_ANTHROPIC_UNSUPPORTED_SCHEMA_KEYS: frozenset[str] = frozenset({
+    "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum",
+    "minLength", "maxLength", "pattern", "format",
+    "minItems", "maxItems", "uniqueItems",
+    "minProperties", "maxProperties", "multipleOf",
+})
+
+
+def _strip_anthropic_unsupported(node: object) -> object:
+    if isinstance(node, dict):
+        return {
+            k: _strip_anthropic_unsupported(v)
+            for k, v in node.items()
+            if k not in _ANTHROPIC_UNSUPPORTED_SCHEMA_KEYS
+        }
+    if isinstance(node, list):
+        return [_strip_anthropic_unsupported(x) for x in node]
+    return node
+
+
 def _network_retry() -> AsyncRetrying:
     return AsyncRetrying(
         stop=stop_after_attempt(3),
@@ -81,7 +105,7 @@ class OpenRouterGateway:
         max_repair_retries: int = 2,
     ) -> T:
         self._require_chat_key()
-        schema = response_model.model_json_schema()
+        schema = _strip_anthropic_unsupported(response_model.model_json_schema())
         messages = self._build_messages(system, user, cache_system)
 
         last_text: str | None = None

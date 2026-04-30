@@ -4,14 +4,24 @@
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --color-bg: #0b0b0d;
-  --color-surface: #131316;
-  --color-border: #2a2a30;
-  --color-fg: #e8e8ec;
-  --color-fg-dim: #9a9aa3;
-  --color-accent: #6ee7b7;
-  --color-warn: #fbbf24;
-  --color-danger: #f87171;
+  /* Neutrals tinted toward emerald (hue 155). Chroma is small but non-zero; a
+     pure #000 / #fff feels dead. The accent at L=0.78 is the same hue family. */
+  --color-bg: oklch(0.155 0.005 155);
+  --color-surface: oklch(0.195 0.006 155);
+  --color-surface-2: oklch(0.235 0.007 155);
+  --color-border: oklch(0.30 0.008 155);
+  --color-border-strong: oklch(0.42 0.012 155);
+  --color-fg: oklch(0.95 0.005 155);
+  --color-fg-dim: oklch(0.66 0.008 155);
+  --color-fg-faint: oklch(0.46 0.008 155);
+
+  --color-accent: oklch(0.78 0.15 155);
+  --color-accent-soft: oklch(0.78 0.15 155 / 0.12);
+  --color-warn: oklch(0.79 0.15 75);
+  --color-danger: oklch(0.69 0.18 25);
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html,
@@ -21,4 +31,38 @@ body,
   color: var(--color-fg);
   font-family: var(--font-sans);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Result reveal: 240ms ease-out-quart, fade + small lift. Conveys state
+   change (a critique just landed); not decoration. */
+@keyframes result-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-result-enter {
+  animation: result-enter 240ms var(--ease-out-quart) both;
+}
+
+@keyframes row-stagger {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-row-stagger {
+  animation: row-stagger 220ms var(--ease-out-quart) both;
 }

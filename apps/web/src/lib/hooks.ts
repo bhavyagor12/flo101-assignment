@@ -60,8 +60,15 @@ export function useCreateSpec(
     mutationFn: (payload: SynthesizeRequest) => api.createSpec(payload),
     onSuccess: (...args) => {
       const [spec] = args;
-      qc.invalidateQueries({ queryKey: queryKeys.specs });
+      // Push the new spec into the cached list directly. invalidateQueries
+      // alone wasn't reliably triggering a refetch on this version of
+      // TanStack Query when the previous list returned [].
+      qc.setQueryData<SkillSpec[]>(queryKeys.specs, (old = []) => {
+        if (old.some((s) => s.id === spec.id)) return old;
+        return [spec, ...old];
+      });
       qc.setQueryData(queryKeys.spec(spec.id), spec);
+      qc.invalidateQueries({ queryKey: queryKeys.specs });
       opts?.onSuccess?.(...args);
     },
     ...opts,
