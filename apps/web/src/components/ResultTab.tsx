@@ -32,7 +32,7 @@ export function ResultTab({
   if (!evaluation || !spec) {
     return (
       <div className="flex h-full items-center justify-center px-8 py-20 text-center">
-        <p className="text-[12px] leading-relaxed text-[--color-fg-faint]">
+        <p className="text-[12px] leading-relaxed text-[var(--color-fg-faint)]">
           No evaluation yet. Submit an artifact in the editor to see scores,
           cited evidence, and the recommended next action here.
         </p>
@@ -49,17 +49,17 @@ export function ResultTab({
 
   return (
     <div className="animate-result-enter">
-      <div className="border-b border-[--color-border]">
+      <div className="border-b border-[var(--color-border)]">
         <Row label="Target file" value={artifactFilename} />
         <Row label="Applied rubric" value={spec.goal_text} />
       </div>
 
-      <section className="border-b border-[--color-border] px-5 py-5">
+      <section className="border-b border-[var(--color-border)] px-5 py-5">
         <div className="flex items-baseline gap-3">
           <span className="text-[44px] font-semibold leading-none tracking-tight tabular-nums">
             {overall100 === null ? "—" : overall100}
           </span>
-          <span className="text-[14px] text-[--color-fg-faint]">/ 100</span>
+          <span className="text-[14px] text-[var(--color-fg-faint)]">/ 100</span>
         </div>
         <div className="mt-3 flex flex-col leading-tight">
           <span
@@ -68,13 +68,13 @@ export function ResultTab({
             {headline.label}
           </span>
           {elapsed !== null && (
-            <span className="mt-1 text-[11px] text-[--color-fg-dim]">
+            <span className="mt-1 text-[11px] text-[var(--color-fg-dim)]">
               Evaluation completed in {elapsed.toFixed(1)}s
             </span>
           )}
         </div>
         {evaluation.refused_reason && (
-          <p className="mt-3 text-[12px] leading-relaxed text-[--color-fg-dim]">
+          <p className="mt-3 text-[12px] leading-relaxed text-[var(--color-fg-dim)]">
             {evaluation.refused_reason}
           </p>
         )}
@@ -82,7 +82,7 @@ export function ResultTab({
 
       {evaluation.dimension_scores.length > 0 && (
         <CollapsibleSection title="Dimension Scores" flush>
-          <ul className="divide-y divide-[--color-border]">
+          <ul className="divide-y divide-[var(--color-border)]">
             {evaluation.dimension_scores.map((d) => (
               <DimensionRow
                 key={d.dimension_id}
@@ -112,20 +112,20 @@ export function ResultTab({
       )}
 
       {evaluation.next_step && (
-        <section className="border-b border-[--color-border] bg-[--color-surface]/40 px-5 py-5">
-          <div className="text-[10px] font-medium uppercase tracking-wider text-[--color-fg-faint]">
+        <section className="border-b border-[var(--color-border)] bg-[var(--color-surface)]/40 px-5 py-5">
+          <div className="text-[10px] font-medium uppercase tracking-wider text-[var(--color-fg-faint)]">
             Recommended next action
           </div>
-          <p className="mt-2.5 text-[14px] leading-snug text-[--color-fg]">
+          <p className="mt-2.5 text-[14px] leading-snug text-[var(--color-fg)]">
             {evaluation.next_step.title}.
           </p>
-          <p className="mt-2 text-[12px] leading-relaxed text-[--color-fg-dim]">
+          <p className="mt-2 text-[12px] leading-relaxed text-[var(--color-fg-dim)]">
             {evaluation.next_step.rationale}
           </p>
           <button
             type="button"
             onClick={onRefactor}
-            className="mt-4 w-full rounded-md bg-[--color-primary] px-4 py-3 text-[12px] font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
+            className="mt-4 w-full rounded-md bg-[var(--color-primary)] px-4 py-3 text-[12px] font-semibold text-white transition-colors hover:bg-[var(--color-primary-hover)]"
           >
             Generate revision · {evaluation.next_step.estimated_minutes} min
           </button>
@@ -145,14 +145,14 @@ export function ResultTab({
             {evaluation.capability_results.map((r, i) => (
               <li
                 key={i}
-                className="flex items-center justify-between gap-3 border-b border-[--color-border] px-5 py-2.5 text-[12px] last:border-b-0"
+                className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] px-5 py-2.5 text-[12px] last:border-b-0"
               >
-                <span className="font-mono text-[11px] text-[--color-fg-dim]">
+                <span className="font-mono text-[11px] text-[var(--color-fg-dim)]">
                   {r.kind}
                 </span>
                 <span className="flex items-center gap-3">
                   <CapabilityStatusBadge status={r.status} />
-                  <span className="tabular-nums text-[10px] text-[--color-fg-faint]">
+                  <span className="tabular-nums text-[10px] text-[var(--color-fg-faint)]">
                     {r.duration_ms}ms
                   </span>
                 </span>
@@ -173,7 +173,7 @@ export function ResultTab({
         )}
         {evaluation.trace_id && (
           <Row label="Trace ID">
-            <span className="font-mono text-[11px] text-[--color-fg-dim]">
+            <span className="font-mono text-[11px] text-[var(--color-fg-dim)]">
               {evaluation.trace_id}
             </span>
           </Row>
@@ -202,7 +202,7 @@ function DimensionRow({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="group flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors hover:bg-[--color-surface]/60"
+        className="group flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors hover:bg-[var(--color-surface)]/60"
       >
         <span
           aria-hidden
@@ -210,7 +210,7 @@ function DimensionRow({
           style={{ backgroundColor: tone.barCss }}
         />
         <ExpandChevron open={open} />
-        <span className="flex-1 truncate text-[13px] text-[--color-fg]">
+        <span className="flex-1 truncate text-[13px] text-[var(--color-fg)]">
           {dim?.title ?? score.dimension_id}
         </span>
         <span
@@ -221,11 +221,11 @@ function DimensionRow({
         </span>
       </button>
       {open && (
-        <div className="border-t border-[--color-border] bg-[--color-bg-deep] px-5 py-4">
-          <div className="text-[10px] font-medium uppercase tracking-wider text-[--color-fg-faint]">
+        <div className="border-t border-[var(--color-border)] bg-[var(--color-bg-deep)] px-5 py-4">
+          <div className="text-[10px] font-medium uppercase tracking-wider text-[var(--color-fg-faint)]">
             Cited evidence · {dim?.title ?? score.dimension_id}
           </div>
-          <p className="mt-2.5 text-[12px] leading-relaxed text-[--color-fg-dim]">
+          <p className="mt-2.5 text-[12px] leading-relaxed text-[var(--color-fg-dim)]">
             {score.feedback}
           </p>
           {score.evidence.length > 0 && (
@@ -239,7 +239,7 @@ function DimensionRow({
               ))}
             </ul>
           )}
-          <div className="mt-3.5 flex items-center gap-4 text-[10px] text-[--color-fg-faint]">
+          <div className="mt-3.5 flex items-center gap-4 text-[10px] text-[var(--color-fg-faint)]">
             <span>confidence {(score.confidence * 100).toFixed(0)}%</span>
             {dim && <span>weight {(dim.weight * 100).toFixed(0)}%</span>}
             <span>raw {score.score}/5</span>
@@ -265,10 +265,10 @@ function EvidenceBlock({
 
   return (
     <li>
-      <div className="mb-1.5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
+      <div className="mb-1.5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-[var(--color-fg-faint)]">
         <SourceBadge source={evidence.source} />
         {evidence.location && (
-          <span className="text-[--color-fg-dim] normal-case tracking-normal">
+          <span className="text-[var(--color-fg-dim)] normal-case tracking-normal">
             {evidence.location}
           </span>
         )}
@@ -283,21 +283,21 @@ function EvidenceBlock({
                 key={lineNo}
                 className={
                   violation
-                    ? "border-l-2 border-[--color-score-low] bg-[--color-violation-bg-strong] pl-3 pr-3 text-[--color-fg]"
-                    : "border-l-2 border-transparent pl-3 pr-3 text-[--color-fg-dim]"
+                    ? "border-l-2 border-[var(--color-score-low)] bg-[var(--color-violation-bg-strong)] pl-3 pr-3 text-[var(--color-fg)]"
+                    : "border-l-2 border-transparent pl-3 pr-3 text-[var(--color-fg-dim)]"
                 }
               >
-                <span className="mr-3 inline-block w-7 text-right tabular-nums text-[--color-fg-faint]">
+                <span className="mr-3 inline-block w-7 text-right tabular-nums text-[var(--color-fg-faint)]">
                   {lineNo}
                 </span>
-                <span className="text-[--color-fg-faint]">|</span>{" "}
+                <span className="text-[var(--color-fg-faint)]">|</span>{" "}
                 <span>{line || " "}</span>
               </div>
             );
           })}
         </pre>
       ) : (
-        <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-black/40 px-3 py-2 font-mono text-[11px] leading-[1.55] text-[--color-fg-dim]">
+        <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-black/40 px-3 py-2 font-mono text-[11px] leading-[1.55] text-[var(--color-fg-dim)]">
           {evidence.content}
         </pre>
       )}
@@ -308,12 +308,12 @@ function EvidenceBlock({
 function SourceBadge({ source }: { source: string }) {
   const colorClass =
     source === "corpus"
-      ? "text-[--color-primary]"
+      ? "text-[var(--color-primary)]"
       : source === "programmatic"
-        ? "text-[--color-score-mid]"
+        ? "text-[var(--color-score-mid)]"
         : source === "llm_rubric"
-          ? "text-[--color-fg-dim]"
-          : "text-[--color-score-low]";
+          ? "text-[var(--color-fg-dim)]"
+          : "text-[var(--color-score-low)]";
   return <span className={colorClass}>{source}</span>;
 }
 
@@ -325,15 +325,15 @@ function GapRow({ gap }: { gap: Gap }) {
         ? "var(--color-score-mid)"
         : "var(--color-fg-faint)";
   return (
-    <li className="border-b border-[--color-border] px-5 py-3 last:border-b-0">
+    <li className="border-b border-[var(--color-border)] px-5 py-3 last:border-b-0">
       <div className="flex items-baseline gap-3 text-[12px]">
         <span
           className="h-3 w-1 flex-none rounded-sm"
           style={{ backgroundColor: stripeCss }}
           aria-hidden
         />
-        <span className="flex-1 text-[--color-fg-dim]">{gap.description}</span>
-        <span className="font-mono text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
+        <span className="flex-1 text-[var(--color-fg-dim)]">{gap.description}</span>
+        <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--color-fg-faint)]">
           {gap.severity}
         </span>
       </div>
@@ -344,10 +344,10 @@ function GapRow({ gap }: { gap: Gap }) {
 function CapabilityStatusBadge({ status }: { status: string }) {
   const cls =
     status === "passed"
-      ? "text-[--color-score-good]"
+      ? "text-[var(--color-score-good)]"
       : status === "failed"
-        ? "text-[--color-score-low]"
-        : "text-[--color-fg-faint]";
+        ? "text-[var(--color-score-low)]"
+        : "text-[var(--color-fg-faint)]";
   return (
     <span className={`text-[10px] uppercase tracking-wider ${cls}`}>
       {status}
@@ -380,7 +380,7 @@ function ExpandChevron({ open }: { open: boolean }) {
       strokeWidth="2.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={`flex-none text-[--color-fg-faint] transition-transform duration-150 ${
+      className={`flex-none text-[var(--color-fg-faint)] transition-transform duration-150 ${
         open ? "rotate-90" : ""
       }`}
       aria-hidden
@@ -402,21 +402,21 @@ function scoreTone(score: number): { barCss: string; numCss: string } {
 
 function headlineFor(ev: Evaluation): { label: string; tone: string } {
   if (ev.status === "refused") {
-    return { label: "Refused", tone: "text-[--color-score-low]" };
+    return { label: "Refused", tone: "text-[var(--color-score-low)]" };
   }
   if (ev.status === "failed") {
-    return { label: "Evaluation failed", tone: "text-[--color-score-low]" };
+    return { label: "Evaluation failed", tone: "text-[var(--color-score-low)]" };
   }
   if (ev.gaps.some((g) => g.severity === "critical")) {
-    return { label: "Critical gaps found", tone: "text-[--color-score-low]" };
+    return { label: "Critical gaps found", tone: "text-[var(--color-score-low)]" };
   }
   if (ev.gaps.some((g) => g.severity === "major")) {
-    return { label: "Major gaps found", tone: "text-[--color-score-mid]" };
+    return { label: "Major gaps found", tone: "text-[var(--color-score-mid)]" };
   }
   if (ev.gaps.length > 0) {
-    return { label: "Minor gaps found", tone: "text-[--color-fg-dim]" };
+    return { label: "Minor gaps found", tone: "text-[var(--color-fg-dim)]" };
   }
-  return { label: "No gaps", tone: "text-[--color-score-good]" };
+  return { label: "No gaps", tone: "text-[var(--color-score-good)]" };
 }
 
 function elapsedSeconds(ev: Evaluation): number | null {

@@ -59,7 +59,7 @@ export function App() {
   };
 
   return (
-    <div className="flex h-screen min-h-screen flex-col overflow-hidden bg-[--color-bg] text-[--color-fg]">
+    <div className="flex h-screen min-h-screen flex-col overflow-hidden bg-[var(--color-bg)] text-[var(--color-fg)]">
       <MenuBar />
       <div className="flex min-h-0 flex-1">
         <main className="flex min-h-0 min-w-0 flex-1 flex-col">
@@ -118,15 +118,15 @@ function EmptyEditor({ onJumpToConfig }: { onJumpToConfig: () => void }) {
   return (
     <div className="flex flex-1 items-center justify-center px-8 py-16">
       <div className="max-w-md text-center">
-        <h2 className="text-[18px] font-medium tracking-tight text-[--color-fg]">
+        <h2 className="text-[18px] font-medium tracking-tight text-[var(--color-fg)]">
           Start by picking a skill
         </h2>
-        <p className="mt-2 text-[13px] leading-relaxed text-[--color-fg-dim]">
+        <p className="mt-2 text-[13px] leading-relaxed text-[var(--color-fg-dim)]">
           Choose one in the Config panel on the right, or synthesize a new
           skill from a learning goal. The artifact editor activates once
           a skill is selected.
         </p>
-        <ol className="mx-auto mt-6 max-w-sm space-y-2.5 text-left text-[12px] leading-relaxed text-[--color-fg-dim]">
+        <ol className="mx-auto mt-6 max-w-sm space-y-2.5 text-left text-[12px] leading-relaxed text-[var(--color-fg-dim)]">
           <li className="flex gap-3">
             <Pill>1</Pill>
             <span>Select a skill, or synthesize a new one.</span>
@@ -143,7 +143,7 @@ function EmptyEditor({ onJumpToConfig }: { onJumpToConfig: () => void }) {
         <button
           type="button"
           onClick={onJumpToConfig}
-          className="mt-7 rounded-md bg-[--color-primary] px-5 py-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
+          className="mt-7 rounded-md bg-[var(--color-primary)] px-5 py-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-[var(--color-primary-hover)]"
         >
           Open Config
         </button>
@@ -156,7 +156,7 @@ function Pill({ children }: { children: React.ReactNode }) {
   return (
     <span
       aria-hidden
-      className="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[--color-surface-2] text-[10px] font-semibold text-[--color-fg]"
+      className="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[var(--color-surface-2)] text-[10px] font-semibold text-[var(--color-fg)]"
     >
       {children}
     </span>
@@ -182,15 +182,15 @@ function SubmitBar({
 }) {
   const canSubmit = specSelected && !!content.trim() && !busy;
   return (
-    <div className="flex-none border-t border-[--color-border] bg-[--color-bg-deep] px-4 py-3">
+    <div className="flex-none border-t border-[var(--color-border)] bg-[var(--color-bg-deep)] px-4 py-3">
       <div className="flex items-center gap-3">
-        <label className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-wider text-[--color-fg-faint]">
+        <label className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-wider text-[var(--color-fg-faint)]">
           kind
           <select
             value={kind}
             onChange={(e) => onKindChange(e.target.value as ArtifactKind)}
             disabled={!specSelected}
-            className="rounded-md border border-[--color-border-strong] bg-[--color-surface-2] px-2.5 py-1.5 text-[12px] tracking-normal text-[--color-fg] normal-case focus:border-[--color-primary] focus:outline-none focus:ring-1 focus:ring-[--color-primary]/40 disabled:opacity-50"
+            className="rounded-md border border-[var(--color-border-strong)] bg-[var(--color-surface-2)] px-2.5 py-1.5 text-[12px] tracking-normal text-[var(--color-fg)] normal-case focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/40 disabled:opacity-50"
           >
             {KINDS.map((k) => (
               <option key={k} value={k}>
@@ -199,7 +199,7 @@ function SubmitBar({
             ))}
           </select>
         </label>
-        <span className="text-[12px] text-[--color-fg-dim]">
+        <span className="text-[12px] text-[var(--color-fg-dim)]">
           {busy
             ? "Running safety check, capabilities, then rubric critique."
             : specSelected
@@ -210,13 +210,13 @@ function SubmitBar({
           type="button"
           disabled={!canSubmit}
           onClick={onSubmit}
-          className="ml-auto rounded-md bg-[--color-primary] px-5 py-2 text-[12px] font-semibold text-white shadow-sm transition-colors hover:bg-[--color-primary-hover] disabled:cursor-not-allowed disabled:bg-[--color-surface-2] disabled:text-[--color-fg-faint] disabled:shadow-none"
+          className="ml-auto rounded-md border border-[var(--color-primary-hover)] bg-[var(--color-primary)] px-5 py-2 text-[12px] font-semibold text-[var(--color-fg)] shadow-sm transition-colors hover:bg-[var(--color-primary-hover)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/40 disabled:cursor-not-allowed disabled:border-[var(--color-border-strong)] disabled:bg-[var(--color-surface-2)] disabled:text-[var(--color-fg-faint)] disabled:shadow-none"
         >
           {busy ? "Critiquing…" : "Submit for critique"}
         </button>
       </div>
       {error && (
-        <div className="mt-2.5 rounded border border-[--color-score-low]/40 bg-[--color-score-low]/10 px-2.5 py-1.5 text-[11px] text-[--color-score-low]">
+        <div className="mt-2.5 rounded border border-[var(--color-score-low)]/40 bg-[var(--color-score-low)]/10 px-2.5 py-1.5 text-[11px] text-[var(--color-score-low)]">
           {error}
         </div>
       )}

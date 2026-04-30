@@ -42,7 +42,7 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
             <select
               value={selectedSpecId ?? ""}
               onChange={(e) => onSelectSpec(e.target.value)}
-              className="min-w-0 flex-1 truncate rounded-md border border-[--color-border-strong] bg-[--color-surface-2] px-3 py-2 text-[13px] text-[--color-fg] focus:border-[--color-primary] focus:outline-none focus:ring-1 focus:ring-[--color-primary]/40"
+              className="min-w-0 flex-1 truncate rounded-md border border-[var(--color-border-strong)] bg-[var(--color-surface-2)] px-3 py-2 text-[13px] text-[var(--color-fg)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/40"
             >
               <option value="" disabled>
                 {list.length === 0 ? "No skills yet" : "Select a skill"}
@@ -58,7 +58,7 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
             <button
               type="button"
               onClick={() => setShowSynth((v) => !v)}
-              className="flex-none rounded-md border border-[--color-border-strong] bg-[--color-surface-2] px-3 py-2 text-[12px] font-medium text-[--color-fg] transition-colors hover:bg-[--color-surface-3]"
+              className="flex-none rounded-md border border-[var(--color-border-strong)] bg-[var(--color-surface-2)] px-3 py-2 text-[12px] font-medium text-[var(--color-fg)] transition-colors hover:bg-[var(--color-surface-3)]"
             >
               {showSynth ? "Cancel" : "+ New"}
             </button>
@@ -75,13 +75,13 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
             </div>
           )}
           {create.isPending && (
-            <p className="mt-3 flex items-center gap-2 text-[11px] text-[--color-fg-dim]">
+            <p className="mt-3 flex items-center gap-2 text-[11px] text-[var(--color-fg-dim)]">
               <Spinner />
               Synthesizing skill profile, ~5 seconds.
             </p>
           )}
           {create.isError && (
-            <div className="mt-2 rounded border border-[--color-score-low]/40 bg-[--color-score-low]/10 px-2 py-1.5 text-[11px] text-[--color-score-low]">
+            <div className="mt-2 rounded border border-[var(--color-score-low)]/40 bg-[var(--color-score-low)]/10 px-2 py-1.5 text-[11px] text-[var(--color-score-low)]">
               {create.error.message}
             </div>
           )}
@@ -91,7 +91,7 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
           <>
             <Row label="Audience" value={spec.data.audience_hint || "any"} />
             <Row label="Artifact kind">
-              <span className="rounded border border-[--color-border-strong] bg-[--color-surface-2] px-2 py-0.5 font-mono text-[11px] text-[--color-fg]">
+              <span className="rounded border border-[var(--color-border-strong)] bg-[var(--color-surface-2)] px-2 py-0.5 font-mono text-[11px] text-[var(--color-fg)]">
                 {spec.data.artifact_kind}
               </span>
             </Row>
@@ -112,16 +112,16 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
                     key={d.id}
                     className="flex items-center justify-between gap-3 px-1 text-[12px]"
                   >
-                    <span className="min-w-0 flex-1 truncate text-[--color-fg]">
+                    <span className="min-w-0 flex-1 truncate text-[var(--color-fg)]">
                       {d.title}
                     </span>
-                    <span className="flex items-center gap-2 text-[--color-fg-dim]">
+                    <span className="flex items-center gap-2 text-[var(--color-fg-dim)]">
                       <span
-                        className="h-1 w-14 overflow-hidden rounded-full bg-[--color-surface-3]"
+                        className="h-1 w-14 overflow-hidden rounded-full bg-[var(--color-surface-3)]"
                         aria-hidden
                       >
                         <span
-                          className="block h-full rounded-full bg-[--color-primary]"
+                          className="block h-full rounded-full bg-[var(--color-primary)]"
                           style={{ width: `${d.weight * 100}%` }}
                         />
                       </span>
@@ -144,14 +144,14 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
           defaultOpen={!spec.data.has_corpus}
           meta={
             spec.data.has_corpus ? (
-              <span className="text-[--color-score-good]">attached</span>
+              <span className="text-[var(--color-score-good)]">attached</span>
             ) : (
               <span>none</span>
             )
           }
         >
           <Row label="What this is for">
-            <p className="text-[12px] leading-relaxed text-[--color-fg-dim]">
+            <p className="text-[12px] leading-relaxed text-[var(--color-fg-dim)]">
               Plain-text or markdown files. Embedded once on upload, retrieved
               per evaluation, cited verbatim in evidence.
             </p>
@@ -162,14 +162,14 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
               multiple
               accept=".txt,.md,.markdown,text/plain,text/markdown"
               onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-              className="block w-full text-[11px] text-[--color-fg-dim] file:mr-3 file:rounded file:border file:border-[--color-border-strong] file:bg-[--color-surface-2] file:px-3 file:py-1.5 file:text-[12px] file:font-medium file:text-[--color-fg] hover:file:bg-[--color-surface-3]"
+              className="block w-full text-[11px] text-[var(--color-fg-dim)] file:mr-3 file:rounded file:border file:border-[var(--color-border-strong)] file:bg-[var(--color-surface-2)] file:px-3 file:py-1.5 file:text-[12px] file:font-medium file:text-[var(--color-fg)] hover:file:bg-[var(--color-surface-3)]"
             />
             {files.length > 0 && (
-              <ul className="mt-2.5 space-y-1 text-[11px] text-[--color-fg-dim]">
+              <ul className="mt-2.5 space-y-1 text-[11px] text-[var(--color-fg-dim)]">
                 {files.map((f) => (
                   <li key={f.name} className="flex justify-between gap-2">
                     <span className="truncate">{f.name}</span>
-                    <span className="tabular-nums text-[--color-fg-faint]">
+                    <span className="tabular-nums text-[var(--color-fg-faint)]">
                       {Math.ceil(f.size / 1024)} KB
                     </span>
                   </li>
@@ -183,19 +183,19 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
                 onClick={() =>
                   upload.mutate({ specId: selectedSpecId, files })
                 }
-                className="mt-3 rounded-md bg-[--color-primary] px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-[--color-primary-hover] disabled:opacity-50"
+                className="mt-3 rounded-md bg-[var(--color-primary)] px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-[var(--color-primary-hover)] disabled:opacity-50"
               >
                 {upload.isPending ? "Embedding…" : "Upload and embed"}
               </button>
             )}
             {upload.isSuccess && (
-              <p className="mt-2 text-[11px] text-[--color-score-good]">
+              <p className="mt-2 text-[11px] text-[var(--color-score-good)]">
                 {upload.data.chunks_added} chunks added,{" "}
                 {upload.data.total_tokens.toLocaleString()} tokens.
               </p>
             )}
             {upload.isError && (
-              <div className="mt-2 rounded border border-[--color-score-low]/40 bg-[--color-score-low]/10 px-2 py-1.5 text-[11px] text-[--color-score-low]">
+              <div className="mt-2 rounded border border-[var(--color-score-low)]/40 bg-[var(--color-score-low)]/10 px-2 py-1.5 text-[11px] text-[var(--color-score-low)]">
                 {upload.error.message}
               </div>
             )}
@@ -209,10 +209,10 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
 function StakesBadge({ stakes }: { stakes: string }) {
   const cls =
     stakes === "high"
-      ? "bg-[--color-score-low]/20 text-[--color-score-low] border-[--color-score-low]/40"
+      ? "bg-[var(--color-score-low)]/20 text-[var(--color-score-low)] border-[var(--color-score-low)]/40"
       : stakes === "medium"
-        ? "bg-[--color-score-mid]/20 text-[--color-score-mid] border-[--color-score-mid]/40"
-        : "bg-[--color-surface-2] text-[--color-fg-dim] border-[--color-border-strong]";
+        ? "bg-[var(--color-score-mid)]/20 text-[var(--color-score-mid)] border-[var(--color-score-mid)]/40"
+        : "bg-[var(--color-surface-2)] text-[var(--color-fg-dim)] border-[var(--color-border-strong)]";
   return (
     <span
       className={`inline-flex items-center rounded border px-2 py-0.5 text-[11px] font-medium tracking-wide ${cls}`}
@@ -244,7 +244,7 @@ function SynthForm({
           time_budget_minutes: null,
         });
       }}
-      className="space-y-3 rounded-md border border-[--color-border-strong] bg-[--color-surface] p-3.5"
+      className="space-y-3 rounded-md border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-3.5"
     >
       <FormField
         label="Goal"
@@ -268,7 +268,7 @@ function SynthForm({
       <button
         type="submit"
         disabled={disabled || !goal.trim()}
-        className="w-full rounded-md bg-[--color-primary] px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-[--color-primary-hover] disabled:opacity-40"
+        className="w-full rounded-md bg-[var(--color-primary)] px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-[var(--color-primary-hover)] disabled:opacity-40"
       >
         Synthesize
       </button>
@@ -291,7 +291,7 @@ function FormField({
 }) {
   return (
     <label className="block">
-      <span className="block text-[10px] font-medium uppercase tracking-wider text-[--color-fg-faint]">
+      <span className="block text-[10px] font-medium uppercase tracking-wider text-[var(--color-fg-faint)]">
         {label}
       </span>
       <input
@@ -300,7 +300,7 @@ function FormField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="mt-1.5 w-full rounded-md border border-[--color-border-strong] bg-[--color-bg] px-2.5 py-1.5 text-[12px] text-[--color-fg] placeholder:text-[--color-fg-faint] focus:border-[--color-primary] focus:outline-none focus:ring-1 focus:ring-[--color-primary]/40"
+        className="mt-1.5 w-full rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-2.5 py-1.5 text-[12px] text-[var(--color-fg)] placeholder:text-[var(--color-fg-faint)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/40"
       />
     </label>
   );
@@ -310,7 +310,7 @@ function Spinner() {
   return (
     <span
       aria-hidden
-      className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[--color-fg-faint] border-t-[--color-primary]"
+      className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[var(--color-fg-faint)] border-t-[var(--color-primary)]"
     />
   );
 }

@@ -7,19 +7,19 @@ interface StatusBarProps {
 export function StatusBar({ apiStatus, chars, busy }: StatusBarProps) {
   const apiOk = apiStatus === "ok";
   return (
-    <footer className="flex h-6 flex-none items-center justify-between border-t border-[--color-border] bg-[--color-bg-deep] px-3 text-[10px] text-[--color-fg-faint]">
+    <footer className="flex h-6 flex-none items-center justify-between border-t border-[var(--color-border)] bg-[var(--color-bg-deep)] px-3 text-[10px] text-[var(--color-fg-faint)]">
       <div className="flex items-center gap-3">
         <span className="flex items-center gap-1.5">
           <span
             className={`inline-block h-1.5 w-1.5 rounded-full ${
               busy
-                ? "bg-[--color-primary] animate-pulse"
+                ? "bg-[var(--color-primary)] animate-pulse"
                 : apiOk
-                  ? "bg-[--color-score-good]"
-                  : "bg-[--color-score-low]"
+                  ? "bg-[var(--color-score-good)]"
+                  : "bg-[var(--color-score-low)]"
             }`}
           />
-          <span className="text-[--color-fg-dim]">
+          <span className="text-[var(--color-fg-dim)]">
             {busy ? "Critiquing" : "Ready"}
           </span>
         </span>

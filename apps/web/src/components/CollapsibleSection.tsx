@@ -18,19 +18,19 @@ export function CollapsibleSection({
 }: CollapsibleSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <section className="border-b border-[--color-border] last:border-b-0">
+    <section className="border-b border-[var(--color-border)] last:border-b-0">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between gap-3 px-5 py-3 text-[11px] font-medium uppercase tracking-wider text-[--color-fg-dim] transition-colors hover:text-[--color-fg]"
+        className="flex w-full items-center justify-between gap-3 px-5 py-3 text-[11px] font-medium uppercase tracking-wider text-[var(--color-fg-dim)] transition-colors hover:text-[var(--color-fg)]"
       >
         <span className="flex items-center gap-2.5">
           <Chevron open={open} />
           {title}
         </span>
         {meta && (
-          <span className="font-normal normal-case tracking-normal text-[10px] text-[--color-fg-faint]">
+          <span className="font-normal normal-case tracking-normal text-[10px] text-[var(--color-fg-faint)]">
             {meta}
           </span>
         )}

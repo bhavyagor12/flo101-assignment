@@ -18,8 +18,8 @@ export function RightPanel({
   result,
 }: RightPanelProps) {
   return (
-    <aside className="flex w-[460px] flex-none flex-col border-l border-[--color-border] bg-[--color-bg-deep]">
-      <div role="tablist" className="flex flex-none border-b border-[--color-border]">
+    <aside className="flex w-[460px] flex-none flex-col border-l border-[var(--color-border)] bg-[var(--color-bg-deep)]">
+      <div role="tablist" className="flex flex-none border-b border-[var(--color-border)]">
         <Tab
           id="config"
           label="Config"
@@ -34,7 +34,7 @@ export function RightPanel({
           dot={hasResult}
           disabled={!hasResult}
         />
-        <div className="flex-1 border-b border-[--color-border]" />
+        <div className="flex-1 border-b border-[var(--color-border)]" />
       </div>
       <div className="flex-1 overflow-y-auto">
         {activeTab === "config" ? config : result}
@@ -68,23 +68,23 @@ function Tab({
       disabled={disabled}
       className={`relative flex items-center gap-2 px-5 py-2.5 text-[11px] uppercase tracking-wider transition-colors ${
         active
-          ? "text-[--color-fg]"
+          ? "text-[var(--color-fg)]"
           : disabled
-            ? "text-[--color-fg-faint]/60"
-            : "text-[--color-fg-dim] hover:text-[--color-fg]"
+            ? "text-[var(--color-fg-faint)]/60"
+            : "text-[var(--color-fg-dim)] hover:text-[var(--color-fg)]"
       } disabled:cursor-not-allowed`}
     >
       {label}
       {dot && (
         <span
           aria-hidden
-          className="inline-block h-1.5 w-1.5 rounded-full bg-[--color-primary]"
+          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]"
         />
       )}
       {active && (
         <span
           aria-hidden
-          className="absolute inset-x-3 -top-px h-0.5 rounded-b bg-[--color-primary]"
+          className="absolute inset-x-3 -top-px h-0.5 rounded-b bg-[var(--color-primary)]"
         />
       )}
     </button>

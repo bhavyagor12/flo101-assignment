@@ -16,20 +16,20 @@ export function Row({ label, value, meta, children, noDivider }: RowProps) {
   return (
     <div
       className={`px-5 py-3 ${
-        noDivider ? "" : "border-b border-[--color-border]/60 last:border-b-0"
+        noDivider ? "" : "border-b border-[var(--color-border)]/60 last:border-b-0"
       }`}
     >
       <div className="flex items-baseline justify-between gap-3">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-[--color-fg-faint]">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-[var(--color-fg-faint)]">
           {label}
         </span>
-        {meta && <span className="text-[10px] text-[--color-fg-faint]">{meta}</span>}
+        {meta && <span className="text-[10px] text-[var(--color-fg-faint)]">{meta}</span>}
       </div>
       <div className="mt-1.5">
         {children !== undefined ? (
           children
         ) : (
-          <span className="text-[13px] text-[--color-fg]">{value ?? "—"}</span>
+          <span className="text-[13px] text-[var(--color-fg)]">{value ?? "—"}</span>
         )}
       </div>
     </div>
