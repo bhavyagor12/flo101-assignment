@@ -4,38 +4,34 @@
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Near-black neutrals tinted toward 240 (cool blue-gray). The reference
-     uses a pure black IDE register; we keep a hint of chroma so the surface
-     doesn't look dead under bright displays. */
-  --color-bg: oklch(0.115 0.005 240);
-  --color-bg-deep: oklch(0.085 0.005 240);
-  --color-surface: oklch(0.155 0.006 240);
-  --color-surface-2: oklch(0.195 0.007 240);
-  --color-surface-3: oklch(0.235 0.008 240);
-  --color-border: oklch(0.26 0.008 240);
-  --color-border-strong: oklch(0.36 0.01 240);
+  /* Near-black neutrals tinted toward 240 (cool blue-gray). Borders are
+     intentionally faint so dense IDE-style stacks don't read as a grid. */
+  --color-bg: oklch(0.118 0.005 240);
+  --color-bg-deep: oklch(0.088 0.005 240);
+  --color-surface: oklch(0.168 0.006 240);
+  --color-surface-2: oklch(0.21 0.007 240);
+  --color-surface-3: oklch(0.255 0.008 240);
+  --color-border: oklch(0.205 0.008 240);
+  --color-border-strong: oklch(0.30 0.01 240);
 
-  --color-fg: oklch(0.94 0.005 240);
-  --color-fg-dim: oklch(0.66 0.008 240);
-  --color-fg-faint: oklch(0.46 0.01 240);
+  --color-fg: oklch(0.95 0.005 240);
+  --color-fg-dim: oklch(0.70 0.008 240);
+  --color-fg-faint: oklch(0.50 0.01 240);
 
-  /* Primary CTA: bright blue. Used for the single primary action per surface. */
-  --color-primary: oklch(0.62 0.20 250);
-  --color-primary-hover: oklch(0.68 0.20 250);
-  --color-primary-soft: oklch(0.62 0.20 250 / 0.15);
+  /* Primary CTA: bright blue. */
+  --color-primary: oklch(0.62 0.21 250);
+  --color-primary-hover: oklch(0.69 0.21 250);
+  --color-primary-soft: oklch(0.62 0.21 250 / 0.18);
 
-  /* Score / severity. Tied to integer scores 1-5 in code:
-     1-2 → low, 3 → mid, 4-5 → good. */
-  --color-score-good: oklch(0.70 0.16 145);
+  /* Score / severity. */
+  --color-score-good: oklch(0.72 0.16 145);
   --color-score-mid: oklch(0.78 0.15 75);
-  --color-score-low: oklch(0.65 0.20 25);
+  --color-score-low: oklch(0.66 0.20 25);
 
-  /* Cited-evidence code block uses a low-saturation red wash on the
-     highlighted line so the violation reads at a glance without screaming. */
   --color-violation-bg: oklch(0.30 0.10 25 / 0.32);
   --color-violation-bg-strong: oklch(0.35 0.13 25 / 0.45);
 
-  --color-link: oklch(0.70 0.18 240);
+  --color-link: oklch(0.72 0.18 240);
 
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -56,7 +52,6 @@ body {
   font-size: 13px;
 }
 
-/* Result panel reveal — 240ms out-quart, fade + small lift. */
 @keyframes result-enter {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -69,6 +64,5 @@ body {
 }
 .animate-row-stagger { animation: row-stagger 220ms var(--ease-out-quart) both; }
 
-/* Hide scrollbars on the line-number gutter while keeping scroll behavior. */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }

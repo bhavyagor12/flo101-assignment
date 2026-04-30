@@ -1,8 +1,9 @@
 import { useState } from "react";
 
-import type { SkillSpec, SynthesizeRequest } from "@flo101/api-types";
+import type { SynthesizeRequest } from "@flo101/api-types";
 
 import { CollapsibleSection } from "./CollapsibleSection";
+import { Row } from "./Row";
 import {
   useCreateSpec,
   useSpec,
@@ -26,191 +27,198 @@ export function ConfigTab({ selectedSpecId, onSelectSpec }: ConfigTabProps) {
   const list = specs.data ?? [];
 
   return (
-    <div className="text-[12px]">
+    <div>
       <CollapsibleSection
-        title="Skill Configuration"
+        title="Skill"
+        flush
         meta={
-          <span className="text-[10px] text-[--color-fg-faint] tabular-nums">
+          <span className="tabular-nums">
             {list.length} {list.length === 1 ? "skill" : "skills"}
           </span>
         }
       >
-        <div className="space-y-3">
-          <Field label="Skill">
-            <div className="flex items-center gap-2">
-              <select
-                value={selectedSpecId ?? ""}
-                onChange={(e) => onSelectSpec(e.target.value)}
-                className="flex-1 rounded border border-[--color-border] bg-[--color-bg] px-2 py-1.5 text-[12px] text-[--color-fg] focus:border-[--color-primary]/60 focus:outline-none"
-              >
-                <option value="" disabled>
-                  {list.length === 0 ? "No skills yet" : "Select a skill…"}
+        <Row label="Active skill">
+          <div className="flex items-stretch gap-2">
+            <select
+              value={selectedSpecId ?? ""}
+              onChange={(e) => onSelectSpec(e.target.value)}
+              className="min-w-0 flex-1 truncate rounded-md border border-[--color-border-strong] bg-[--color-surface-2] px-3 py-2 text-[13px] text-[--color-fg] focus:border-[--color-primary] focus:outline-none focus:ring-1 focus:ring-[--color-primary]/40"
+            >
+              <option value="" disabled>
+                {list.length === 0 ? "No skills yet" : "Select a skill"}
+              </option>
+              {list.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.goal_text.length > 56
+                    ? s.goal_text.slice(0, 53) + "…"
+                    : s.goal_text}
                 </option>
-                {list.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.goal_text.length > 60
-                      ? s.goal_text.slice(0, 57) + "…"
-                      : s.goal_text}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => setShowSynth((v) => !v)}
-                className="rounded border border-[--color-border] px-2 py-1.5 text-[11px] text-[--color-fg-dim] hover:border-[--color-primary]/60 hover:text-[--color-fg]"
-              >
-                {showSynth ? "Cancel" : "+ New"}
-              </button>
-            </div>
-          </Field>
-
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => setShowSynth((v) => !v)}
+              className="flex-none rounded-md border border-[--color-border-strong] bg-[--color-surface-2] px-3 py-2 text-[12px] font-medium text-[--color-fg] transition-colors hover:bg-[--color-surface-3]"
+            >
+              {showSynth ? "Cancel" : "+ New"}
+            </button>
+          </div>
           {showSynth && (
-            <SynthForm
-              disabled={create.isPending}
-              onSubmit={(payload) => {
-                create.mutate(payload);
-                setShowSynth(false);
-              }}
-            />
+            <div className="mt-3">
+              <SynthForm
+                disabled={create.isPending}
+                onSubmit={(payload) => {
+                  create.mutate(payload);
+                  setShowSynth(false);
+                }}
+              />
+            </div>
           )}
           {create.isPending && (
-            <div className="text-[11px] text-[--color-fg-dim]">
+            <p className="mt-3 flex items-center gap-2 text-[11px] text-[--color-fg-dim]">
+              <Spinner />
               Synthesizing skill profile, ~5 seconds.
-            </div>
+            </p>
           )}
           {create.isError && (
-            <div className="rounded border border-[--color-score-low]/40 bg-[--color-score-low]/10 px-2 py-1.5 text-[11px] text-[--color-score-low]">
+            <div className="mt-2 rounded border border-[--color-score-low]/40 bg-[--color-score-low]/10 px-2 py-1.5 text-[11px] text-[--color-score-low]">
               {create.error.message}
             </div>
           )}
+        </Row>
 
-          {spec.data && (
-            <>
-              <Field label="Audience">
-                <div className="text-[12px] text-[--color-fg-dim]">
-                  {spec.data.audience_hint || "any"}
-                </div>
-              </Field>
-              <Field label="Artifact kind">
-                <div className="text-[12px] text-[--color-fg-dim]">
-                  {spec.data.artifact_kind}
-                </div>
-              </Field>
-              <Field label="Stakes">
-                <span
-                  className={`inline-block rounded px-1.5 py-0.5 text-[11px] ${
-                    spec.data.stakes_class === "high"
-                      ? "bg-[--color-score-low]/15 text-[--color-score-low]"
-                      : spec.data.stakes_class === "medium"
-                        ? "bg-[--color-score-mid]/15 text-[--color-score-mid]"
-                        : "bg-[--color-surface-2] text-[--color-fg-dim]"
-                  }`}
-                >
-                  {spec.data.stakes_class}
+        {spec.data && (
+          <>
+            <Row label="Audience" value={spec.data.audience_hint || "any"} />
+            <Row label="Artifact kind">
+              <span className="rounded border border-[--color-border-strong] bg-[--color-surface-2] px-2 py-0.5 font-mono text-[11px] text-[--color-fg]">
+                {spec.data.artifact_kind}
+              </span>
+            </Row>
+            <Row label="Stakes">
+              <StakesBadge stakes={spec.data.stakes_class} />
+            </Row>
+            <Row
+              label="Rubric"
+              meta={
+                <span className="tabular-nums">
+                  {spec.data.rubric.dimensions.length} dimensions
                 </span>
-              </Field>
-              <Field
-                label={`Rubric · ${spec.data.rubric.dimensions.length} dimensions`}
-              >
-                <ul className="space-y-1 text-[11px] text-[--color-fg-dim]">
-                  {spec.data.rubric.dimensions.map((d) => (
-                    <li
-                      key={d.id}
-                      className="flex items-baseline justify-between gap-3"
-                    >
-                      <span className="truncate text-[--color-fg]">
-                        {d.title}
+              }
+            >
+              <ul className="-mx-1 mt-1 space-y-2">
+                {spec.data.rubric.dimensions.map((d) => (
+                  <li
+                    key={d.id}
+                    className="flex items-center justify-between gap-3 px-1 text-[12px]"
+                  >
+                    <span className="min-w-0 flex-1 truncate text-[--color-fg]">
+                      {d.title}
+                    </span>
+                    <span className="flex items-center gap-2 text-[--color-fg-dim]">
+                      <span
+                        className="h-1 w-14 overflow-hidden rounded-full bg-[--color-surface-3]"
+                        aria-hidden
+                      >
+                        <span
+                          className="block h-full rounded-full bg-[--color-primary]"
+                          style={{ width: `${d.weight * 100}%` }}
+                        />
                       </span>
-                      <span className="tabular-nums text-[--color-fg-faint]">
+                      <span className="w-9 text-right tabular-nums">
                         {(d.weight * 100).toFixed(0)}%
                       </span>
-                    </li>
-                  ))}
-                </ul>
-              </Field>
-            </>
-          )}
-        </div>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </Row>
+          </>
+        )}
       </CollapsibleSection>
 
       {selectedSpecId && spec.data && (
         <CollapsibleSection
           title="Reference material"
+          flush
           defaultOpen={!spec.data.has_corpus}
           meta={
             spec.data.has_corpus ? (
-              <span className="text-[10px] text-[--color-score-good]">attached</span>
+              <span className="text-[--color-score-good]">attached</span>
             ) : (
-              <span className="text-[10px] text-[--color-fg-faint]">none</span>
+              <span>none</span>
             )
           }
         >
-          <p className="mb-3 text-[11px] leading-relaxed text-[--color-fg-dim]">
-            Plain-text or markdown. Embedded once on upload, retrieved per
-            evaluation, cited verbatim in evidence.
-          </p>
-          <input
-            type="file"
-            multiple
-            accept=".txt,.md,.markdown,text/plain,text/markdown"
-            onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-            className="block w-full text-[11px] text-[--color-fg-dim] file:mr-3 file:rounded file:border file:border-[--color-border] file:bg-[--color-surface-2] file:px-2.5 file:py-1 file:text-[11px] file:text-[--color-fg] hover:file:border-[--color-primary]/50"
-          />
-          {files.length > 0 && (
-            <ul className="mt-2 space-y-0.5 text-[11px] text-[--color-fg-dim]">
-              {files.map((f) => (
-                <li key={f.name} className="flex justify-between gap-2">
-                  <span className="truncate">{f.name}</span>
-                  <span className="tabular-nums text-[--color-fg-faint]">
-                    {Math.ceil(f.size / 1024)} KB
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {files.length > 0 && (
-            <button
-              type="button"
-              disabled={!files.length || upload.isPending}
-              onClick={() =>
-                upload.mutate({ specId: selectedSpecId, files })
-              }
-              className="mt-2 rounded border border-[--color-primary]/60 bg-[--color-primary-soft] px-3 py-1.5 text-[11px] font-medium text-[--color-primary] hover:bg-[--color-primary]/25 disabled:opacity-40"
-            >
-              {upload.isPending ? "Embedding…" : "Upload and embed"}
-            </button>
-          )}
-          {upload.isSuccess && (
-            <p className="mt-2 text-[11px] text-[--color-score-good]">
-              {upload.data.chunks_added} chunks added,{" "}
-              {upload.data.total_tokens.toLocaleString()} tokens.
+          <Row label="What this is for">
+            <p className="text-[12px] leading-relaxed text-[--color-fg-dim]">
+              Plain-text or markdown files. Embedded once on upload, retrieved
+              per evaluation, cited verbatim in evidence.
             </p>
-          )}
-          {upload.isError && (
-            <div className="mt-2 rounded border border-[--color-score-low]/40 bg-[--color-score-low]/10 px-2 py-1.5 text-[11px] text-[--color-score-low]">
-              {upload.error.message}
-            </div>
-          )}
+          </Row>
+          <Row label="Files">
+            <input
+              type="file"
+              multiple
+              accept=".txt,.md,.markdown,text/plain,text/markdown"
+              onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+              className="block w-full text-[11px] text-[--color-fg-dim] file:mr-3 file:rounded file:border file:border-[--color-border-strong] file:bg-[--color-surface-2] file:px-3 file:py-1.5 file:text-[12px] file:font-medium file:text-[--color-fg] hover:file:bg-[--color-surface-3]"
+            />
+            {files.length > 0 && (
+              <ul className="mt-2.5 space-y-1 text-[11px] text-[--color-fg-dim]">
+                {files.map((f) => (
+                  <li key={f.name} className="flex justify-between gap-2">
+                    <span className="truncate">{f.name}</span>
+                    <span className="tabular-nums text-[--color-fg-faint]">
+                      {Math.ceil(f.size / 1024)} KB
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {files.length > 0 && (
+              <button
+                type="button"
+                disabled={!files.length || upload.isPending}
+                onClick={() =>
+                  upload.mutate({ specId: selectedSpecId, files })
+                }
+                className="mt-3 rounded-md bg-[--color-primary] px-4 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-[--color-primary-hover] disabled:opacity-50"
+              >
+                {upload.isPending ? "Embedding…" : "Upload and embed"}
+              </button>
+            )}
+            {upload.isSuccess && (
+              <p className="mt-2 text-[11px] text-[--color-score-good]">
+                {upload.data.chunks_added} chunks added,{" "}
+                {upload.data.total_tokens.toLocaleString()} tokens.
+              </p>
+            )}
+            {upload.isError && (
+              <div className="mt-2 rounded border border-[--color-score-low]/40 bg-[--color-score-low]/10 px-2 py-1.5 text-[11px] text-[--color-score-low]">
+                {upload.error.message}
+              </div>
+            )}
+          </Row>
         </CollapsibleSection>
       )}
     </div>
   );
 }
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function StakesBadge({ stakes }: { stakes: string }) {
+  const cls =
+    stakes === "high"
+      ? "bg-[--color-score-low]/20 text-[--color-score-low] border-[--color-score-low]/40"
+      : stakes === "medium"
+        ? "bg-[--color-score-mid]/20 text-[--color-score-mid] border-[--color-score-mid]/40"
+        : "bg-[--color-surface-2] text-[--color-fg-dim] border-[--color-border-strong]";
   return (
-    <div>
-      <div className="mb-1 text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
-        {label}
-      </div>
-      {children}
-    </div>
+    <span
+      className={`inline-flex items-center rounded border px-2 py-0.5 text-[11px] font-medium tracking-wide ${cls}`}
+    >
+      {stakes}
+    </span>
   );
 }
 
@@ -236,7 +244,7 @@ function SynthForm({
           time_budget_minutes: null,
         });
       }}
-      className="space-y-2 rounded border border-[--color-border] bg-[--color-surface] p-3"
+      className="space-y-3 rounded-md border border-[--color-border-strong] bg-[--color-surface] p-3.5"
     >
       <FormField
         label="Goal"
@@ -260,7 +268,7 @@ function SynthForm({
       <button
         type="submit"
         disabled={disabled || !goal.trim()}
-        className="w-full rounded border border-[--color-primary]/60 bg-[--color-primary-soft] px-3 py-1.5 text-[11px] font-medium text-[--color-primary] hover:bg-[--color-primary]/25 disabled:opacity-40"
+        className="w-full rounded-md bg-[--color-primary] px-3 py-2 text-[12px] font-semibold text-white transition-colors hover:bg-[--color-primary-hover] disabled:opacity-40"
       >
         Synthesize
       </button>
@@ -283,7 +291,7 @@ function FormField({
 }) {
   return (
     <label className="block">
-      <span className="block text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
+      <span className="block text-[10px] font-medium uppercase tracking-wider text-[--color-fg-faint]">
         {label}
       </span>
       <input
@@ -292,8 +300,17 @@ function FormField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="mt-1 w-full rounded border border-[--color-border] bg-[--color-bg] px-2 py-1.5 text-[11px] text-[--color-fg] placeholder:text-[--color-fg-faint] focus:border-[--color-primary]/60 focus:outline-none"
+        className="mt-1.5 w-full rounded-md border border-[--color-border-strong] bg-[--color-bg] px-2.5 py-1.5 text-[12px] text-[--color-fg] placeholder:text-[--color-fg-faint] focus:border-[--color-primary] focus:outline-none focus:ring-1 focus:ring-[--color-primary]/40"
       />
     </label>
+  );
+}
+
+function Spinner() {
+  return (
+    <span
+      aria-hidden
+      className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[--color-fg-faint] border-t-[--color-primary]"
+    />
   );
 }

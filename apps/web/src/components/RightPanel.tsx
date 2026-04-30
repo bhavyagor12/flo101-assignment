@@ -18,7 +18,7 @@ export function RightPanel({
   result,
 }: RightPanelProps) {
   return (
-    <aside className="flex w-[420px] flex-none flex-col border-l border-[--color-border] bg-[--color-bg-deep]">
+    <aside className="flex w-[460px] flex-none flex-col border-l border-[--color-border] bg-[--color-bg-deep]">
       <div role="tablist" className="flex flex-none border-b border-[--color-border]">
         <Tab
           id="config"

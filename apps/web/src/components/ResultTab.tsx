@@ -12,6 +12,7 @@ import type {
 } from "@flo101/api-types";
 
 import { CollapsibleSection } from "./CollapsibleSection";
+import { Row } from "./Row";
 
 interface ResultTabProps {
   evaluation: Evaluation | null;
@@ -30,8 +31,8 @@ export function ResultTab({
 }: ResultTabProps) {
   if (!evaluation || !spec) {
     return (
-      <div className="flex h-full items-center justify-center px-8 py-16 text-center">
-        <p className="text-[12px] text-[--color-fg-faint]">
+      <div className="flex h-full items-center justify-center px-8 py-20 text-center">
+        <p className="text-[12px] leading-relaxed text-[--color-fg-faint]">
           No evaluation yet. Submit an artifact in the editor to see scores,
           cited evidence, and the recommended next action here.
         </p>
@@ -40,7 +41,6 @@ export function ResultTab({
   }
 
   const overall = evaluation.overall_score;
-  // The reference shows /100. Our scores are 1-5; multiplying by 20 maps cleanly.
   const overall100 =
     overall === null || overall === undefined ? null : Math.round(overall * 20);
   const dimByID = new Map(spec.rubric.dimensions.map((d) => [d.id, d]));
@@ -48,44 +48,41 @@ export function ResultTab({
   const elapsed = elapsedSeconds(evaluation);
 
   return (
-    <div className="animate-result-enter text-[12px]">
-      <header className="border-b border-[--color-border]">
-        <Field label="Target File" value={artifactFilename} mono />
-        <Field
-          label="Applied Rubric"
-          value={spec.goal_text}
-        />
-      </header>
+    <div className="animate-result-enter">
+      <div className="border-b border-[--color-border]">
+        <Row label="Target file" value={artifactFilename} />
+        <Row label="Applied rubric" value={spec.goal_text} />
+      </div>
 
-      <section className="border-b border-[--color-border] px-4 py-4">
+      <section className="border-b border-[--color-border] px-5 py-5">
         <div className="flex items-baseline gap-3">
           <span className="text-[44px] font-semibold leading-none tracking-tight tabular-nums">
             {overall100 === null ? "—" : overall100}
           </span>
           <span className="text-[14px] text-[--color-fg-faint]">/ 100</span>
-          <div className="ml-3 flex flex-col leading-tight">
-            <span
-              className={`text-[11px] font-semibold uppercase tracking-wider ${headline.tone}`}
-            >
-              {headline.label}
+        </div>
+        <div className="mt-3 flex flex-col leading-tight">
+          <span
+            className={`text-[11px] font-semibold uppercase tracking-wider ${headline.tone}`}
+          >
+            {headline.label}
+          </span>
+          {elapsed !== null && (
+            <span className="mt-1 text-[11px] text-[--color-fg-dim]">
+              Evaluation completed in {elapsed.toFixed(1)}s
             </span>
-            {elapsed !== null && (
-              <span className="mt-0.5 text-[11px] text-[--color-fg-dim]">
-                Evaluation completed in {elapsed.toFixed(1)}s
-              </span>
-            )}
-          </div>
+          )}
         </div>
         {evaluation.refused_reason && (
-          <p className="mt-3 text-[11px] leading-relaxed text-[--color-fg-dim]">
+          <p className="mt-3 text-[12px] leading-relaxed text-[--color-fg-dim]">
             {evaluation.refused_reason}
           </p>
         )}
       </section>
 
       {evaluation.dimension_scores.length > 0 && (
-        <CollapsibleSection title="Dimension Scores">
-          <ul className="-mx-2 divide-y divide-[--color-border]">
+        <CollapsibleSection title="Dimension Scores" flush>
+          <ul className="divide-y divide-[--color-border]">
             {evaluation.dimension_scores.map((d) => (
               <DimensionRow
                 key={d.dimension_id}
@@ -99,8 +96,14 @@ export function ResultTab({
       )}
 
       {evaluation.gaps.length > 0 && (
-        <CollapsibleSection title={`Gaps · ${evaluation.gaps.length}`}>
-          <ul className="space-y-2">
+        <CollapsibleSection
+          title="Gaps"
+          flush
+          meta={
+            <span className="tabular-nums">{evaluation.gaps.length}</span>
+          }
+        >
+          <ul>
             {evaluation.gaps.map((g, i) => (
               <GapRow key={i} gap={g} />
             ))}
@@ -109,20 +112,20 @@ export function ResultTab({
       )}
 
       {evaluation.next_step && (
-        <section className="border-b border-[--color-border] px-4 py-4">
-          <div className="text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
-            Recommended Next Action
+        <section className="border-b border-[--color-border] bg-[--color-surface]/40 px-5 py-5">
+          <div className="text-[10px] font-medium uppercase tracking-wider text-[--color-fg-faint]">
+            Recommended next action
           </div>
-          <p className="mt-2 text-[13px] leading-relaxed text-[--color-fg]">
+          <p className="mt-2.5 text-[14px] leading-snug text-[--color-fg]">
             {evaluation.next_step.title}.
           </p>
-          <p className="mt-1.5 text-[11px] leading-relaxed text-[--color-fg-dim]">
+          <p className="mt-2 text-[12px] leading-relaxed text-[--color-fg-dim]">
             {evaluation.next_step.rationale}
           </p>
           <button
             type="button"
             onClick={onRefactor}
-            className="mt-3 w-full rounded bg-[--color-primary] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-white transition-colors hover:bg-[--color-primary-hover]"
+            className="mt-4 w-full rounded-md bg-[--color-primary] px-4 py-3 text-[12px] font-semibold text-white transition-colors hover:bg-[--color-primary-hover]"
           >
             Generate revision · {evaluation.next_step.estimated_minutes} min
           </button>
@@ -130,21 +133,24 @@ export function ResultTab({
       )}
 
       <CollapsibleSection
-        title="Capability Checks"
+        title="Capability checks"
         defaultOpen={false}
+        flush
         meta={<CapabilityCounts results={evaluation.capability_results} />}
       >
         {evaluation.capability_results.length === 0 ? (
-          <p className="text-[11px] text-[--color-fg-faint]">No checks ran.</p>
+          <Row label="—" value="No checks ran." />
         ) : (
-          <ul className="space-y-1">
+          <ul>
             {evaluation.capability_results.map((r, i) => (
               <li
                 key={i}
-                className="flex items-center justify-between gap-3 text-[11px]"
+                className="flex items-center justify-between gap-3 border-b border-[--color-border] px-5 py-2.5 text-[12px] last:border-b-0"
               >
-                <span className="font-mono text-[--color-fg-dim]">{r.kind}</span>
-                <span className="flex items-center gap-2">
+                <span className="font-mono text-[11px] text-[--color-fg-dim]">
+                  {r.kind}
+                </span>
+                <span className="flex items-center gap-3">
                   <CapabilityStatusBadge status={r.status} />
                   <span className="tabular-nums text-[10px] text-[--color-fg-faint]">
                     {r.duration_ms}ms
@@ -156,45 +162,26 @@ export function ResultTab({
         )}
       </CollapsibleSection>
 
-      <CollapsibleSection title="Metadata" defaultOpen={false}>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-[11px]">
-          <dt className="text-[--color-fg-faint]">Disposition</dt>
-          <dd className="text-[--color-fg-dim]">
-            {dispositionLabel(evaluation.safety_disposition)}
-          </dd>
-          <dt className="text-[--color-fg-faint]">Status</dt>
-          <dd className="text-[--color-fg-dim]">{evaluation.status}</dd>
-          {evaluation.created_at && (
-            <>
-              <dt className="text-[--color-fg-faint]">Submitted</dt>
-              <dd className="text-[--color-fg-dim]">
-                {formatTime(evaluation.created_at)}
-              </dd>
-            </>
-          )}
-          {evaluation.completed_at && (
-            <>
-              <dt className="text-[--color-fg-faint]">Completed</dt>
-              <dd className="text-[--color-fg-dim]">
-                {formatTime(evaluation.completed_at)}
-              </dd>
-            </>
-          )}
-          {evaluation.trace_id && (
-            <>
-              <dt className="text-[--color-fg-faint]">Trace</dt>
-              <dd className="font-mono text-[10px] text-[--color-fg-dim]">
-                {evaluation.trace_id.slice(0, 12)}…
-              </dd>
-            </>
-          )}
-        </dl>
+      <CollapsibleSection title="Metadata" defaultOpen={false} flush>
+        <Row label="Disposition" value={dispositionLabel(evaluation.safety_disposition)} />
+        <Row label="Status" value={evaluation.status} />
+        {evaluation.created_at && (
+          <Row label="Submitted" value={formatTime(evaluation.created_at)} />
+        )}
+        {evaluation.completed_at && (
+          <Row label="Completed" value={formatTime(evaluation.completed_at)} />
+        )}
+        {evaluation.trace_id && (
+          <Row label="Trace ID">
+            <span className="font-mono text-[11px] text-[--color-fg-dim]">
+              {evaluation.trace_id}
+            </span>
+          </Row>
+        )}
       </CollapsibleSection>
     </div>
   );
 }
-
-// ─── Dimension row with cited-evidence expansion ─────────────────────────────
 
 function DimensionRow({
   score,
@@ -210,16 +197,16 @@ function DimensionRow({
   const tone = scoreTone(score.score);
 
   return (
-    <li className="px-2">
+    <li>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="group flex w-full items-center gap-2 py-2.5 text-left transition-colors hover:bg-[--color-surface]/40"
+        className="group flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors hover:bg-[--color-surface]/60"
       >
         <span
           aria-hidden
-          className="h-7 w-1 flex-none rounded-sm"
+          className="h-8 w-1 flex-none rounded-sm"
           style={{ backgroundColor: tone.barCss }}
         />
         <ExpandChevron open={open} />
@@ -234,15 +221,15 @@ function DimensionRow({
         </span>
       </button>
       {open && (
-        <div className="-mx-2 border-t border-[--color-border] bg-[--color-bg-deep]/50 px-4 py-3">
-          <div className="text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
-            Cited Evidence: {dim?.title ?? score.dimension_id}
+        <div className="border-t border-[--color-border] bg-[--color-bg-deep] px-5 py-4">
+          <div className="text-[10px] font-medium uppercase tracking-wider text-[--color-fg-faint]">
+            Cited evidence · {dim?.title ?? score.dimension_id}
           </div>
-          <p className="mt-2 text-[11px] leading-relaxed text-[--color-fg-dim]">
+          <p className="mt-2.5 text-[12px] leading-relaxed text-[--color-fg-dim]">
             {score.feedback}
           </p>
           {score.evidence.length > 0 && (
-            <ul className="mt-3 space-y-3">
+            <ul className="mt-3.5 space-y-3.5">
               {score.evidence.map((e, i) => (
                 <EvidenceBlock
                   key={i}
@@ -252,7 +239,7 @@ function DimensionRow({
               ))}
             </ul>
           )}
-          <div className="mt-3 flex items-center gap-3 text-[10px] text-[--color-fg-faint]">
+          <div className="mt-3.5 flex items-center gap-4 text-[10px] text-[--color-fg-faint]">
             <span>confidence {(score.confidence * 100).toFixed(0)}%</span>
             {dim && <span>weight {(dim.weight * 100).toFixed(0)}%</span>}
             <span>raw {score.score}/5</span>
@@ -262,8 +249,6 @@ function DimensionRow({
     </li>
   );
 }
-
-// ─── Cited evidence block (code excerpt with violation highlight) ────────────
 
 function EvidenceBlock({
   evidence,
@@ -280,14 +265,16 @@ function EvidenceBlock({
 
   return (
     <li>
-      <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
+      <div className="mb-1.5 flex items-center gap-2 text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
         <SourceBadge source={evidence.source} />
         {evidence.location && (
-          <span className="text-[--color-fg-dim]">{evidence.location}</span>
+          <span className="text-[--color-fg-dim] normal-case tracking-normal">
+            {evidence.location}
+          </span>
         )}
       </div>
       {excerpt ? (
-        <pre className="mt-1.5 overflow-x-auto rounded bg-[--color-bg-deep] py-2 font-mono text-[11px] leading-[1.55] text-[--color-fg]">
+        <pre className="overflow-x-auto rounded-md bg-black/40 py-2 font-mono text-[11px] leading-[1.55]">
           {excerpt.lines.map((line, i) => {
             const lineNo = excerpt.start + i;
             const violation = lineNo === lineNum;
@@ -296,23 +283,21 @@ function EvidenceBlock({
                 key={lineNo}
                 className={
                   violation
-                    ? "border-l-2 border-[--color-score-low] bg-[--color-violation-bg-strong] pl-3 pr-3"
+                    ? "border-l-2 border-[--color-score-low] bg-[--color-violation-bg-strong] pl-3 pr-3 text-[--color-fg]"
                     : "border-l-2 border-transparent pl-3 pr-3 text-[--color-fg-dim]"
                 }
               >
-                <span className="mr-3 inline-block w-6 text-right text-[--color-fg-faint] tabular-nums">
+                <span className="mr-3 inline-block w-7 text-right tabular-nums text-[--color-fg-faint]">
                   {lineNo}
                 </span>
-                <span className="text-[--color-fg-dim]">|</span>{" "}
-                <span className={violation ? "text-[--color-fg]" : ""}>
-                  {line || " "}
-                </span>
+                <span className="text-[--color-fg-faint]">|</span>{" "}
+                <span>{line || " "}</span>
               </div>
             );
           })}
         </pre>
       ) : (
-        <pre className="mt-1.5 overflow-x-auto rounded bg-[--color-bg-deep] px-3 py-2 font-mono text-[11px] leading-[1.55] text-[--color-fg-dim] whitespace-pre-wrap">
+        <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-black/40 px-3 py-2 font-mono text-[11px] leading-[1.55] text-[--color-fg-dim]">
           {evidence.content}
         </pre>
       )}
@@ -332,8 +317,6 @@ function SourceBadge({ source }: { source: string }) {
   return <span className={colorClass}>{source}</span>;
 }
 
-// ─── Gap row ────────────────────────────────────────────────────────────────
-
 function GapRow({ gap }: { gap: Gap }) {
   const stripeCss =
     gap.severity === "critical"
@@ -342,19 +325,21 @@ function GapRow({ gap }: { gap: Gap }) {
         ? "var(--color-score-mid)"
         : "var(--color-fg-faint)";
   return (
-    <li
-      className="border-l-2 pl-3 text-[12px]"
-      style={{ borderColor: stripeCss }}
-    >
-      <div className="text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
-        {gap.severity}
+    <li className="border-b border-[--color-border] px-5 py-3 last:border-b-0">
+      <div className="flex items-baseline gap-3 text-[12px]">
+        <span
+          className="h-3 w-1 flex-none rounded-sm"
+          style={{ backgroundColor: stripeCss }}
+          aria-hidden
+        />
+        <span className="flex-1 text-[--color-fg-dim]">{gap.description}</span>
+        <span className="font-mono text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
+          {gap.severity}
+        </span>
       </div>
-      <div className="text-[--color-fg-dim]">{gap.description}</div>
     </li>
   );
 }
-
-// ─── Capability status pieces ───────────────────────────────────────────────
 
 function CapabilityStatusBadge({ status }: { status: string }) {
   const cls =
@@ -380,38 +365,9 @@ function CapabilityCounts({ results }: { results: CapabilityResult[] }) {
   if (counts.failed) parts.push(`${counts.failed} fail`);
   if (counts.skipped) parts.push(`${counts.skipped} skipped`);
   return (
-    <span className="text-[10px] tabular-nums">{parts.join(" · ") || "—"}</span>
+    <span className="tabular-nums">{parts.join(" · ") || "—"}</span>
   );
 }
-
-// ─── Header field ──────────────────────────────────────────────────────────
-
-function Field({
-  label,
-  value,
-  mono,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
-  return (
-    <div className="border-b border-[--color-border] px-4 py-2.5 last:border-b-0">
-      <div className="text-[10px] uppercase tracking-wider text-[--color-fg-faint]">
-        {label}
-      </div>
-      <div
-        className={`mt-0.5 text-[12px] text-[--color-fg] ${
-          mono ? "font-mono" : ""
-        }`}
-      >
-        {value}
-      </div>
-    </div>
-  );
-}
-
-// ─── helpers ────────────────────────────────────────────────────────────────
 
 function ExpandChevron({ open }: { open: boolean }) {
   return (
@@ -436,21 +392,12 @@ function ExpandChevron({ open }: { open: boolean }) {
 
 function scoreTone(score: number): { barCss: string; numCss: string } {
   if (score <= 2) {
-    return {
-      barCss: "var(--color-score-low)",
-      numCss: "var(--color-score-low)",
-    };
+    return { barCss: "var(--color-score-low)", numCss: "var(--color-score-low)" };
   }
   if (score >= 4) {
-    return {
-      barCss: "var(--color-score-good)",
-      numCss: "var(--color-link)",
-    };
+    return { barCss: "var(--color-score-good)", numCss: "var(--color-link)" };
   }
-  return {
-    barCss: "var(--color-score-mid)",
-    numCss: "var(--color-link)",
-  };
+  return { barCss: "var(--color-score-mid)", numCss: "var(--color-link)" };
 }
 
 function headlineFor(ev: Evaluation): { label: string; tone: string } {
@@ -521,8 +468,5 @@ function buildExcerpt(
   if (lineNum < 1 || lineNum > all.length) return null;
   const start = Math.max(1, lineNum - context);
   const end = Math.min(all.length, lineNum + context);
-  return {
-    start,
-    lines: all.slice(start - 1, end),
-  };
+  return { start, lines: all.slice(start - 1, end) };
 }
