@@ -71,3 +71,4 @@ LangSmith via `@traceable` · Docker compose v2.
 - `PRODUCT.md` — north-star metric and why it's that one
 - `EVAL.md` — sample transcripts, test taxonomy, known limits
 - `AI_USAGE.md` — what the model authored, what I redirected
+- `DEPLOY_AWS.md` — single-instance EC2 deployment

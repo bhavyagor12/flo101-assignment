@@ -7,7 +7,7 @@ COMPOSE_DEV := docker compose -f docker-compose.yml -f docker-compose.dev.yml
 
 .DEFAULT_GOAL := help
 
-.PHONY: help setup up down dev logs build rebuild type-gen test eval demo-seed lint type-check clean nuke env-check
+.PHONY: help setup up down dev logs build rebuild aws-up aws-logs aws-down type-gen test eval demo-seed lint type-check clean nuke env-check
 
 help: ## show this help
 	@awk 'BEGIN{FS=":.*##"; printf "\nUsage: make \033[36m<target>\033[0m\n\nTargets:\n"} /^[a-zA-Z_-]+:.*##/ { printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -51,6 +51,15 @@ build: ## build images
 
 rebuild: ## rebuild images without cache
 	$(COMPOSE) build --no-cache
+
+aws-up: env-check ## build and run AWS single-instance compose stack
+	docker compose -f docker-compose.aws.yml up -d --build
+
+aws-logs: ## tail AWS compose stack logs
+	docker compose -f docker-compose.aws.yml logs -f
+
+aws-down: ## stop AWS compose stack
+	docker compose -f docker-compose.aws.yml down
 
 type-gen: ## Pydantic -> JSON Schema -> TS
 	$(COMPOSE) exec -T api uv run python -m flo101_api.scripts.export_schema
