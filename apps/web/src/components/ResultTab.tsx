@@ -79,6 +79,7 @@ export function ResultTab({
   const dimByID = new Map(spec.rubric.dimensions.map((d) => [d.id, d]));
   const headline = headlineFor(evaluation);
   const elapsed = elapsedSeconds(evaluation);
+  const elapsedLabel = elapsed === null ? null : formatElapsed(elapsed);
   const targetLabel = artifactContent
     ? artifactFilename
     : `stored artifact ${evaluation.artifact_id.slice(0, 8)}`;
@@ -110,9 +111,9 @@ export function ResultTab({
           >
             {headline.label}
           </span>
-          {elapsed !== null && (
+          {elapsedLabel && (
             <span className="mt-1 text-[11px] text-[var(--color-fg-dim)]">
-              Evaluation completed in {elapsed.toFixed(1)}s
+              Evaluation completed in {elapsedLabel}
             </span>
           )}
         </div>
@@ -537,7 +538,20 @@ function elapsedSeconds(ev: Evaluation): number | null {
   const t1 = Date.parse(ev.created_at);
   const t2 = Date.parse(ev.completed_at);
   if (Number.isNaN(t1) || Number.isNaN(t2)) return null;
-  return Math.max(0, (t2 - t1) / 1000);
+  const timestampSeconds = Math.max(0, (t2 - t1) / 1000);
+  if (timestampSeconds > 0) return timestampSeconds;
+
+  const capabilityMs = ev.capability_results.reduce(
+    (sum, result) => sum + result.duration_ms,
+    0,
+  );
+  return capabilityMs > 0 ? capabilityMs / 1000 : null;
+}
+
+function formatElapsed(seconds: number): string {
+  if (seconds < 0.1) return "<0.1s";
+  if (seconds < 10) return `${seconds.toFixed(1)}s`;
+  return `${Math.round(seconds)}s`;
 }
 
 function dispositionLabel(d: SafetyDisposition): string {

@@ -253,7 +253,7 @@ async def assemble_node(state: CriticState) -> dict[str, object]:
             refused_reason=state.get("safety_input_reason", "input refused"),
             capability_results=[],
             trace_id=state.get("trace_id"),
-            created_at=now,
+            created_at=artifact.submitted_at,
             completed_at=now,
         )
     else:
@@ -292,7 +292,7 @@ async def assemble_node(state: CriticState) -> dict[str, object]:
             refused_reason=state.get("refused_reason"),
             capability_results=state.get("capability_results", []) or [],
             trace_id=state.get("trace_id"),
-            created_at=now,
+            created_at=artifact.submitted_at,
             completed_at=now,
         )
 

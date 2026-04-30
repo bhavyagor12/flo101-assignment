@@ -99,7 +99,7 @@ def _build_timeout_evaluation(
         ),
         capability_results=[],
         trace_id=None,
-        created_at=now,
+        created_at=artifact.submitted_at,
         completed_at=now,
     )
     insert_evaluation(evaluation)
