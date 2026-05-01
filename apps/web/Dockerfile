@@ -17,6 +17,9 @@ COPY --from=deps /repo/node_modules ./node_modules
 COPY --from=deps /repo/apps/web/node_modules ./apps/web/node_modules
 COPY --from=deps /repo/packages/api-types/node_modules ./packages/api-types/node_modules
 COPY . .
+# generated.ts is gitignored, so a fresh clone has no types; tsc fails
+# without this step. Source: openapi.json at repo root.
+RUN pnpm --filter @flo101/api-types type-gen
 WORKDIR /repo/apps/web
 RUN pnpm build
 

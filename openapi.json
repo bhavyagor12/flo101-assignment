@@ -1,0 +1,1196 @@
+{
+  "components": {
+    "schemas": {
+      "ArtifactKind": {
+        "enum": [
+          "text",
+          "code",
+          "sql",
+          "diagram_markdown",
+          "mixed"
+        ],
+        "title": "ArtifactKind",
+        "type": "string"
+      },
+      "ArtifactSubmission": {
+        "additionalProperties": false,
+        "description": "Inbound payload for evaluation \u2014 system fills id and timestamps.",
+        "properties": {
+          "content": {
+            "maxLength": 200000,
+            "minLength": 1,
+            "title": "Content",
+            "type": "string"
+          },
+          "filename": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filename"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ArtifactKind"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Metadata",
+            "type": "object"
+          }
+        },
+        "required": [
+          "kind",
+          "content"
+        ],
+        "title": "ArtifactSubmission",
+        "type": "object"
+      },
+      "Body_upload_corpus_spec__spec_id__corpus_post": {
+        "properties": {
+          "files": {
+            "description": "One or more text/markdown files",
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "title": "Body_upload_corpus_spec__spec_id__corpus_post",
+        "type": "object"
+      },
+      "CapabilityKind": {
+        "enum": [
+          "llm_rubric",
+          "corpus_grounded_evidence",
+          "structural_check",
+          "code_lint",
+          "code_sandbox_execute",
+          "sql_parse",
+          "sql_execute"
+        ],
+        "title": "CapabilityKind",
+        "type": "string"
+      },
+      "CapabilityResult": {
+        "additionalProperties": false,
+        "description": "Outcome of running one capability node during evaluation.",
+        "properties": {
+          "duration_ms": {
+            "minimum": 0.0,
+            "title": "Duration Ms",
+            "type": "integer"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/CapabilityKind"
+          },
+          "output": {
+            "additionalProperties": true,
+            "title": "Output",
+            "type": "object"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CapabilityStatus"
+          }
+        },
+        "required": [
+          "kind",
+          "status",
+          "duration_ms"
+        ],
+        "title": "CapabilityResult",
+        "type": "object"
+      },
+      "CapabilityStatus": {
+        "enum": [
+          "passed",
+          "failed",
+          "skipped"
+        ],
+        "title": "CapabilityStatus",
+        "type": "string"
+      },
+      "CapabilityWiring": {
+        "additionalProperties": false,
+        "description": "Which capabilities the Critic should run for this skill, and with what config.",
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "title": "Config",
+            "type": "object"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/CapabilityKind"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "CapabilityWiring",
+        "type": "object"
+      },
+      "CorpusUploadResult": {
+        "additionalProperties": false,
+        "description": "Outcome of an ingest call.",
+        "properties": {
+          "chunks_added": {
+            "minimum": 0.0,
+            "title": "Chunks Added",
+            "type": "integer"
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "spec_id": {
+            "title": "Spec Id",
+            "type": "string"
+          },
+          "total_tokens": {
+            "minimum": 0.0,
+            "title": "Total Tokens",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "spec_id",
+          "sources",
+          "chunks_added",
+          "total_tokens"
+        ],
+        "title": "CorpusUploadResult",
+        "type": "object"
+      },
+      "DimensionScore": {
+        "additionalProperties": false,
+        "description": "A score on one rubric dimension, with feedback and evidence.",
+        "properties": {
+          "confidence": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "dimension_id": {
+            "title": "Dimension Id",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceItem"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "feedback": {
+            "minLength": 1,
+            "title": "Feedback",
+            "type": "string"
+          },
+          "score": {
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Score",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "dimension_id",
+          "score",
+          "confidence",
+          "feedback",
+          "evidence"
+        ],
+        "title": "DimensionScore",
+        "type": "object"
+      },
+      "Evaluation": {
+        "additionalProperties": false,
+        "description": "Top-level Critic output. `overall_score` is None when disposition forbids scoring.",
+        "properties": {
+          "artifact_id": {
+            "title": "Artifact Id",
+            "type": "string"
+          },
+          "capability_results": {
+            "items": {
+              "$ref": "#/components/schemas/CapabilityResult"
+            },
+            "title": "Capability Results",
+            "type": "array"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dimension_scores": {
+            "items": {
+              "$ref": "#/components/schemas/DimensionScore"
+            },
+            "title": "Dimension Scores",
+            "type": "array"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/Gap"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "next_step": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NextStep"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "overall_score": {
+            "anyOf": [
+              {
+                "maximum": 5.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overall Score"
+          },
+          "refused_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refused Reason"
+          },
+          "safety_disposition": {
+            "$ref": "#/components/schemas/SafetyDisposition"
+          },
+          "spec_id": {
+            "title": "Spec Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EvaluationStatus"
+          },
+          "trace_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "LangSmith trace id for the evaluation run",
+            "title": "Trace Id"
+          }
+        },
+        "required": [
+          "id",
+          "spec_id",
+          "artifact_id",
+          "status",
+          "safety_disposition",
+          "dimension_scores",
+          "gaps",
+          "next_step",
+          "capability_results",
+          "created_at",
+          "completed_at"
+        ],
+        "title": "Evaluation",
+        "type": "object"
+      },
+      "EvaluationStatus": {
+        "enum": [
+          "pending",
+          "running",
+          "completed",
+          "refused",
+          "failed"
+        ],
+        "title": "EvaluationStatus",
+        "type": "string"
+      },
+      "EvidenceItem": {
+        "additionalProperties": false,
+        "description": "A piece of evidence cited for a score, with provenance.",
+        "properties": {
+          "confidence": {
+            "default": 1.0,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "content": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Content",
+            "type": "string"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "line range / chunk id / file path",
+            "title": "Location"
+          },
+          "source": {
+            "$ref": "#/components/schemas/EvidenceSource"
+          }
+        },
+        "required": [
+          "source",
+          "content"
+        ],
+        "title": "EvidenceItem",
+        "type": "object"
+      },
+      "EvidenceSource": {
+        "enum": [
+          "artifact",
+          "corpus",
+          "programmatic",
+          "llm_rubric"
+        ],
+        "title": "EvidenceSource",
+        "type": "string"
+      },
+      "Gap": {
+        "additionalProperties": false,
+        "description": "Something the artifact is missing relative to the rubric.",
+        "properties": {
+          "description": {
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/GapSeverity"
+          }
+        },
+        "required": [
+          "description",
+          "severity"
+        ],
+        "title": "Gap",
+        "type": "object"
+      },
+      "GapSeverity": {
+        "enum": [
+          "minor",
+          "major",
+          "critical"
+        ],
+        "title": "GapSeverity",
+        "type": "string"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "NextStep": {
+        "additionalProperties": false,
+        "description": "The single highest-leverage next action for the learner.",
+        "properties": {
+          "estimated_minutes": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 600.0,
+            "title": "Estimated Minutes",
+            "type": "integer"
+          },
+          "rationale": {
+            "minLength": 1,
+            "title": "Rationale",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "rationale",
+          "estimated_minutes"
+        ],
+        "title": "NextStep",
+        "type": "object"
+      },
+      "Rubric": {
+        "additionalProperties": false,
+        "description": "Collection of dimensions whose weights sum to 1.0.",
+        "properties": {
+          "dimensions": {
+            "items": {
+              "$ref": "#/components/schemas/RubricDimension"
+            },
+            "minItems": 2,
+            "title": "Dimensions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dimensions"
+        ],
+        "title": "Rubric",
+        "type": "object"
+      },
+      "RubricAnchor": {
+        "additionalProperties": false,
+        "description": "A single score level on a dimension, with a concrete description.",
+        "properties": {
+          "description": {
+            "description": "What artifacts at this score look like",
+            "minLength": 1,
+            "title": "Description",
+            "type": "string"
+          },
+          "score": {
+            "description": "Score level, 1-5",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Score",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "score",
+          "description"
+        ],
+        "title": "RubricAnchor",
+        "type": "object"
+      },
+      "RubricDimension": {
+        "additionalProperties": false,
+        "description": "One axis of evaluation. Carries weight + anchors that pin scoring behavior.",
+        "properties": {
+          "anchors": {
+            "items": {
+              "$ref": "#/components/schemas/RubricAnchor"
+            },
+            "title": "Anchors",
+            "type": "array"
+          },
+          "id": {
+            "description": "Stable snake_case identifier",
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "description": "Human-readable dimension name",
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          },
+          "weight": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1.0,
+            "title": "Weight",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "weight",
+          "anchors"
+        ],
+        "title": "RubricDimension",
+        "type": "object"
+      },
+      "SafetyDisposition": {
+        "enum": [
+          "self_evaluated",
+          "human_review_suggested",
+          "expert_review_required",
+          "refused"
+        ],
+        "title": "SafetyDisposition",
+        "type": "string"
+      },
+      "SkillSpec": {
+        "additionalProperties": false,
+        "description": "Generated, versioned, persistable description of a skill.",
+        "properties": {
+          "artifact_kind": {
+            "$ref": "#/components/schemas/ArtifactKind"
+          },
+          "audience_hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "e.g. 'junior PM', 'medical resident', 'mid-level engineer'",
+            "title": "Audience Hint"
+          },
+          "authored_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Authored By"
+          },
+          "capabilities": {
+            "items": {
+              "$ref": "#/components/schemas/CapabilityWiring"
+            },
+            "minItems": 1,
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "challenge_templates": {
+            "description": "Natural-language templates the Curator instantiates",
+            "items": {
+              "type": "string"
+            },
+            "title": "Challenge Templates",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "exemplar_prompts": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Keys: 'great' | 'medium' | 'weak' \u2014 prompts that elicit each",
+            "title": "Exemplar Prompts",
+            "type": "object"
+          },
+          "goal_text": {
+            "minLength": 4,
+            "title": "Goal Text",
+            "type": "string"
+          },
+          "has_corpus": {
+            "default": false,
+            "title": "Has Corpus",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "UUID v4 as string",
+            "title": "Id",
+            "type": "string"
+          },
+          "meta_critique_score": {
+            "description": "Synthesizer's self-grade on this spec",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Meta Critique Score",
+            "type": "number"
+          },
+          "pathway_archetypes": {
+            "description": "Step shapes the Composer composes (e.g. 'reproduce_from_spec')",
+            "items": {
+              "type": "string"
+            },
+            "title": "Pathway Archetypes",
+            "type": "array"
+          },
+          "rubric": {
+            "$ref": "#/components/schemas/Rubric"
+          },
+          "stakes_class": {
+            "$ref": "#/components/schemas/StakesClass"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "default": 1,
+            "minimum": 1.0,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "goal_text",
+          "artifact_kind",
+          "stakes_class",
+          "rubric",
+          "capabilities",
+          "meta_critique_score",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SkillSpec",
+        "type": "object"
+      },
+      "StakesClass": {
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "title": "StakesClass",
+        "type": "string"
+      },
+      "SynthesizeRequest": {
+        "additionalProperties": false,
+        "description": "Input to the Synthesizer. Corpus is uploaded separately after creation.",
+        "properties": {
+          "audience_hint": {
+            "anyOf": [
+              {
+                "maxLength": 400,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audience Hint"
+          },
+          "goal_text": {
+            "maxLength": 2000,
+            "minLength": 4,
+            "title": "Goal Text",
+            "type": "string"
+          },
+          "output_goal": {
+            "anyOf": [
+              {
+                "maxLength": 400,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional: the concrete deliverable the learner aims to produce",
+            "title": "Output Goal"
+          },
+          "time_budget_minutes": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 10000.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Budget Minutes"
+          }
+        },
+        "required": [
+          "goal_text"
+        ],
+        "title": "SynthesizeRequest",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Proof-of-Work Evaluator \u2014 Track C",
+    "title": "flo101 Critic Agent",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Root  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Root",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/evaluation": {
+      "get": {
+        "operationId": "list_recent_evaluations_evaluation_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Evaluation"
+                  },
+                  "title": "Response List Recent Evaluations Evaluation Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List recent evaluations",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
+    "/evaluation/{evaluation_id}": {
+      "get": {
+        "operationId": "get_one_evaluation_evaluation__evaluation_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "evaluation_id",
+            "required": true,
+            "schema": {
+              "title": "Evaluation Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Evaluation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get an evaluation by id",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Healthz Healthz Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Healthz",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/spec": {
+      "get": {
+        "operationId": "list_all_specs_spec_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SkillSpec"
+                  },
+                  "title": "Response List All Specs Spec Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List all SkillSpecs",
+        "tags": [
+          "spec"
+        ]
+      },
+      "post": {
+        "operationId": "create_spec_spec_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SynthesizeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillSpec"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Synthesize a SkillSpec from a natural-language goal",
+        "tags": [
+          "spec"
+        ]
+      }
+    },
+    "/spec/{spec_id}": {
+      "get": {
+        "operationId": "get_one_spec_spec__spec_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "spec_id",
+            "required": true,
+            "schema": {
+              "title": "Spec Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillSpec"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get a SkillSpec by id",
+        "tags": [
+          "spec"
+        ]
+      }
+    },
+    "/spec/{spec_id}/corpus": {
+      "post": {
+        "operationId": "upload_corpus_spec__spec_id__corpus_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "spec_id",
+            "required": true,
+            "schema": {
+              "title": "Spec Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_corpus_spec__spec_id__corpus_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorpusUploadResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload reference materials to ground evaluation",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/spec/{spec_id}/corpus/summary": {
+      "get": {
+        "operationId": "get_corpus_summary_spec__spec_id__corpus_summary_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "spec_id",
+            "required": true,
+            "schema": {
+              "title": "Spec Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "title": "Response Get Corpus Summary Spec  Spec Id  Corpus Summary Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get a representative excerpt of a spec's corpus",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/spec/{spec_id}/evaluate": {
+      "post": {
+        "operationId": "evaluate_spec__spec_id__evaluate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "spec_id",
+            "required": true,
+            "schema": {
+              "title": "Spec Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArtifactSubmission"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Evaluation"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Evaluate an artifact against a SkillSpec",
+        "tags": [
+          "evaluation"
+        ]
+      }
+    }
+  }
+}

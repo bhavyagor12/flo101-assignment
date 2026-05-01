@@ -71,5 +71,7 @@ Thumbs.db
 logs/
 
 # ─── Generated artifacts ──────────────────────────────────────────
+# generated.ts is regenerated from openapi.json during the web Docker build,
+# so we keep it out of git. openapi.json is the source of truth for that
+# step and must be committed (otherwise fresh clones / Docker builds fail).
 packages/api-types/src/generated.ts
-openapi.json
