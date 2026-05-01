@@ -170,8 +170,8 @@ $ uv run pytest tests/ evals/test_offline_capabilities.py
   `expert_review_required` or `human_review_suggested`, never
   `self_evaluated`.
 
-These cost tokens; gated by `OPENROUTER_API_KEY` (and `OPENAI_API_KEY`
-for embedding-dependent tests).
+These cost tokens; gated by `OPENROUTER_API_KEY` (chat and embeddings
+both route through OpenRouter).
 
 ## Robustness — failure modes handled
 

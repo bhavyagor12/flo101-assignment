@@ -31,10 +31,9 @@ def _isolated_sqlite() -> None:  # pyright: ignore[reportUnusedFunction]
     if "SQLITE_PATH" not in os.environ:
         tmp = Path(tempfile.mkdtemp(prefix="flo101-tests-")) / "tests.sqlite"
         os.environ["SQLITE_PATH"] = str(tmp)
-    # Make the LLM keys present so config loads cleanly; the FakeGateway
+    # Make the LLM key present so config loads cleanly; the FakeGateway
     # is what actually services calls during tests.
     os.environ.setdefault("OPENROUTER_API_KEY", "test-fake")
-    os.environ.setdefault("OPENAI_API_KEY", "test-fake")
     get_settings.cache_clear()
 
 

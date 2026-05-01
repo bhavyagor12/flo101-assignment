@@ -386,11 +386,12 @@ def main() -> int:
         print(f"✓ inserted {spec.id} — {spec.goal_text[:60]}…")
         inserted += 1
 
-    # Corpus seeding for SOAP requires OPENAI_API_KEY (embedding call).
-    # Skipped silently otherwise so `make demo-seed` works keyless.
+    # Corpus seeding for SOAP requires OPENROUTER_API_KEY (embedding call
+    # routed via OpenRouter). Skipped silently otherwise so `make demo-seed`
+    # works keyless.
     import os
 
-    if os.environ.get("OPENAI_API_KEY") and inserted:
+    if os.environ.get("OPENROUTER_API_KEY") and inserted:
         try:
             import asyncio
 

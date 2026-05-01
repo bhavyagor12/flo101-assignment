@@ -110,7 +110,7 @@ from the rubric prompt so it doesn't read as a passed signal.
 | Synthesizer + critique | Anthropic Opus 4.7                  | runs once per spec; a bad rubric ruins everything downstream            |
 | Rubric critique        | Anthropic Sonnet 4.6                | the workhorse; balanced cost vs. anchored-scoring depth                 |
 | Safety gates           | Anthropic Haiku 4.5                 | trivial classification, called twice per evaluation                      |
-| Embeddings             | OpenAI `text-embedding-3-small`     | direct API; cheaper than via OpenRouter                                 |
+| Embeddings             | OpenRouter `openai/text-embedding-3-small` | one key, one transport; trade a small per-token premium for simpler ops |
 | Tracing                | LangSmith via `@traceable`          | one env var; `Tracer` protocol covers non-LLM spans                     |
 | Storage                | SQLite + sqlite-vec                 | one file, vector search inline; switch to Postgres+pgvector at scale    |
 

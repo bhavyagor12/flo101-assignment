@@ -40,8 +40,7 @@ nano .env
 
 Fill at least:
 
-- `OPENROUTER_API_KEY`
-- `OPENAI_API_KEY`
+- `OPENROUTER_API_KEY` — used for both chat completions and embeddings.
 
 Keep `VITE_API_BASE_URL=/api` for the EC2 setup. Browser requests hit the
 same host, and the web container proxies `/api` to the API container.

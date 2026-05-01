@@ -83,12 +83,17 @@ class OpenRouterGateway:
             timeout=httpx.Timeout(60.0, connect=10.0),
         )
         self._embed = AsyncOpenAI(
-            api_key=settings.openai_api_key or "missing",
+            api_key=settings.openrouter_api_key or "missing",
+            base_url=settings.openrouter_base_url,
+            default_headers={
+                "HTTP-Referer": "https://github.com/flo101/critic",
+                "X-Title": "flo101 Critic Agent",
+            },
             timeout=httpx.Timeout(30.0, connect=10.0),
         )
         self._embedding_model = settings.embedding_model
         self._has_chat_key = bool(settings.openrouter_api_key)
-        self._has_embed_key = bool(settings.openai_api_key)
+        self._has_embed_key = bool(settings.openrouter_api_key)
 
     @traceable(name="llm.structured")
     async def structured(
@@ -196,7 +201,7 @@ class OpenRouterGateway:
                 )
                 return [item.embedding for item in response.data]
         # AsyncRetrying re-raises on exhaustion; this is unreachable.
-        raise UpstreamException(provider="openai", detail="embedding retry exhausted")
+        raise UpstreamException(provider="openrouter", detail="embedding retry exhausted")
 
     async def aclose(self) -> None:
         await self._chat.close()
@@ -307,6 +312,6 @@ class OpenRouterGateway:
     def _require_embed_key(self) -> None:
         if not self._has_embed_key:
             raise UpstreamException(
-                provider="openai",
-                detail="OPENAI_API_KEY is not set",
+                provider="openrouter",
+                detail="OPENROUTER_API_KEY is not set",
             )

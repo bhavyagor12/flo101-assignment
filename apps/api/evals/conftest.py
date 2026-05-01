@@ -3,8 +3,8 @@
 Tests fall into two buckets:
   - **offline**: deterministic, no API keys needed (chunking, DB round-trips,
     programmatic capabilities). Always run.
-  - **online**: LLM-using (synthesizer, critic, safety). Skipped when
-    OPENROUTER_API_KEY is unset, so the harness is safe to run on every
+  - **online**: LLM-using (synthesizer, critic, safety, embeddings). Skipped
+    when OPENROUTER_API_KEY is unset, so the harness is safe to run on every
     commit but only does the cheap layer in CI without secrets.
 """
 
@@ -19,23 +19,17 @@ import pytest
 from flo101_api.config import get_settings
 
 
-def _has_chat_key() -> bool:
+def _has_openrouter_key() -> bool:
     return bool(os.environ.get("OPENROUTER_API_KEY"))
 
 
-def _has_embed_key() -> bool:
-    return bool(os.environ.get("OPENAI_API_KEY"))
-
-
 needs_llm = pytest.mark.skipif(
-    not _has_chat_key(),
+    not _has_openrouter_key(),
     reason="OPENROUTER_API_KEY unset — skipping online eval",
 )
 
-needs_embed = pytest.mark.skipif(
-    not _has_embed_key(),
-    reason="OPENAI_API_KEY unset — skipping embedding-dependent eval",
-)
+# Embeddings now route via OpenRouter too, so the gate is the same.
+needs_embed = needs_llm
 
 
 @pytest.fixture(scope="session", autouse=True)

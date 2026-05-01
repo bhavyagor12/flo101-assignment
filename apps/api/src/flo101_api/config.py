@@ -21,18 +21,18 @@ class Settings(BaseSettings):
     )
 
     # ─── LLM access ──────────────────────────────────────────
-    # Keys default to "" so the service can boot without them; the LLM
-    # gateway raises a typed error when actually called with no key.
+    # Single key: chat and embeddings both go through OpenRouter.
+    # Defaults to "" so the service can boot without it; the LLM gateway
+    # raises a typed error when actually called with no key.
     openrouter_api_key: str = Field(default="", description="OpenRouter API key")
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
-    openai_api_key: str = Field(default="", description="OpenAI API key (embeddings)")
 
     # ─── Model routing ───────────────────────────────────────
     model_synthesizer: str = "anthropic/claude-opus-4-7"
     model_rubric_critique: str = "anthropic/claude-sonnet-4-6"
     model_safety_guard: str = "anthropic/claude-haiku-4-5"
     model_capability_router: str = "anthropic/claude-haiku-4-5"
-    embedding_model: str = "text-embedding-3-small"
+    embedding_model: str = "openai/text-embedding-3-small"
 
     # ─── Observability ───────────────────────────────────────
     langsmith_tracing: bool = False
