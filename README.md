@@ -9,8 +9,8 @@ This repo is **Track C** of the flo101 Applied AI Engineer assessment.
 
 ## Quick start
 
-Requires Docker + Make. Copy `.env.example` to `.env` and fill keys
-(OpenRouter + OpenAI), then:
+Requires Docker + Make. Copy `.env.example` to `.env` and fill the
+`OPENROUTER_API_KEY` (handles both chat and embeddings), then:
 
 ```bash
 make setup            # install deps, build images, boot, seed 3 demo specs
@@ -61,9 +61,9 @@ make nuke         # stop + remove containers AND volumes (destructive)
 ## Stack
 
 Turborepo + pnpm · Python 3.13 + FastAPI + Pydantic v2 + LangGraph ·
-OpenRouter (Opus / Sonnet / Haiku routing) · OpenAI for embeddings ·
-SQLite + sqlite-vec · Vite + React 19 + Tailwind v4 + TanStack Query ·
-LangSmith via `@traceable` · Docker compose v2.
+OpenRouter (Opus / Sonnet / Haiku for chat + embeddings) · SQLite +
+sqlite-vec · Vite + React 19 + Tailwind v4 + TanStack Query · LangSmith
+via `@traceable` · Docker compose v2.
 
 ## Docs in this repo
 
