@@ -44,6 +44,7 @@ junit.xml
 .env.*
 *.local
 !.env.example
+!.env.aws.example
 
 # ─── Persistent runtime data (per-spec corpora, sqlite) ──────────
 *.sqlite
