@@ -23,7 +23,6 @@ interface ResultTabProps {
   selectedEvaluationId: string | null;
   loadingHistory: boolean;
   onSelectEvaluation: (id: string) => void;
-  onRefactor?: () => void;
 }
 
 export function ResultTab({
@@ -35,7 +34,6 @@ export function ResultTab({
   selectedEvaluationId,
   loadingHistory,
   onSelectEvaluation,
-  onRefactor,
 }: ResultTabProps) {
   if (!evaluation) {
     return (
@@ -166,13 +164,9 @@ export function ResultTab({
           <p className="mt-2 text-[12px] leading-relaxed text-[var(--color-fg-dim)]">
             {evaluation.next_step.rationale}
           </p>
-          <button
-            type="button"
-            onClick={onRefactor}
-            className="mt-4 w-full rounded-md bg-[var(--color-primary)] px-4 py-3 text-[12px] font-semibold text-white transition-colors hover:bg-[var(--color-primary-hover)]"
-          >
-            Generate revision · {evaluation.next_step.estimated_minutes} min
-          </button>
+          <div className="mt-3 text-[10px] uppercase tracking-wider text-[var(--color-fg-faint)]">
+            Estimated effort · {evaluation.next_step.estimated_minutes} min
+          </div>
         </section>
       )}
 
